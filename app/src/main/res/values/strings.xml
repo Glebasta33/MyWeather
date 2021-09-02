@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">MyWeather</string>
+    <string name="hint_enter_name_of_city">Введите название города</string>
+</resources>
