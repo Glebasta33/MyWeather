@@ -13,37 +13,39 @@
         android:id="@+id/constraintLayoutHeader"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintVertical_weight="1"
+        android:background="@color/yellow_header"
         app:layout_constraintBottom_toTopOf="@+id/constraintLayoutMiddle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:background="@color/yellow_header">
+        app:layout_constraintVertical_weight="1">
 
         <TextView
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:text="Моя Погода"
             android:textColor="@color/teal_700"
             android:textSize="24dp"
             android:textStyle="bold"
-            android:layout_marginTop="16dp"
             app:layout_constraintBottom_toTopOf="@+id/switchDayOrWeek"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed" />
 
-
+        <!-- TODO: Найти на Udemy как сделать две надписи возле switch-->
         <Switch
             android:id="@+id/switchDayOrWeek"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
             android:text="Switch"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView"
-            android:layout_marginBottom="12dp"
             tools:ignore="UseSwitchCompatOrMaterialXml" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -52,53 +54,69 @@
         android:id="@+id/constraintLayoutMiddle"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintVertical_weight="3"
         app:layout_constraintBottom_toTopOf="@+id/constraintLayoutFooter"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayoutHeader">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayoutHeader"
+        app:layout_constraintVertical_weight="3">
 
 
-
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+        <TextView
+            android:id="@+id/textViewTest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        </ScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayoutFooter"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintVertical_weight="4"
+        android:background="@color/yellow_header"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayoutMiddle"
-        android:background="@color/yellow_header">
+        app:layout_constraintVertical_weight="4">
 
         <EditText
-            android:id="@+id/enterCityNameEditText"
+            android:id="@+id/editTextNameOfCity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/hint_enter_name_of_city"
-            android:layout_marginTop="8dp"
             android:layout_marginHorizontal="48dp"
-            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="8dp"
+            android:hint="@string/hint_enter_name_of_city"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/findButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Поиск"
-            app:layout_constraintTop_toBottomOf="@id/enterCityNameEditText"
             android:layout_marginHorizontal="48dp"
+            android:text="Поиск"
+            android:onClick="onClickFind"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintTop_toBottomOf="@id/editTextNameOfCity" />
 
         <Button
             android:id="@+id/findNearButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Рядом"
-            app:layout_constraintTop_toBottomOf="@id/findButton"
             android:layout_marginHorizontal="48dp"
+            android:text="Рядом"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintTop_toBottomOf="@id/findButton" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
