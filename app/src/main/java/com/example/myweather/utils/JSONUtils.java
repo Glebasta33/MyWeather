@@ -5,6 +5,11 @@ import org.json.JSONObject;
 
 
 public class JSONUtils {
+
+    public static final String KEY_COORDINATES_OBJECT = "coord";
+    public static final String KEY_LON = "lon";
+    public static final String KEY_LAT = "lat";
+
     public static final String KEY_WEATHER_ARR = "weather";
     public static final String KEY_DESCRIPTION = "description";
 
@@ -18,9 +23,15 @@ public class JSONUtils {
     public static final String KEY_SPEED_OF_WIND = "speed";
     public static final String KEY_DIRECTION_OF_WIND = "deg";
 
+    public static final String KEY_NAME_OF_CITY = "name";
+
     public static Weather getWeatherFromJSON(JSONObject jsonObject) {
         Weather weather = null;
         try {
+            String nameOfCity = jsonObject.getString(KEY_NAME_OF_CITY);
+            JSONObject jsonObjectCoordinates = jsonObject.getJSONObject(KEY_COORDINATES_OBJECT);
+            double lon = jsonObjectCoordinates.getDouble(KEY_LON);
+            double lat = jsonObjectCoordinates.getDouble(KEY_LAT);
             String description = jsonObject.getJSONArray(KEY_WEATHER_ARR).getJSONObject(0).getString(KEY_DESCRIPTION);
             JSONObject jsonObjectMain = jsonObject.getJSONObject(KEY_MAIN_OBJECT);
             double temp = jsonObjectMain.getDouble(KEY_TEMP);
@@ -30,7 +41,7 @@ public class JSONUtils {
             JSONObject jsonObjectWind = jsonObject.getJSONObject(KEY_WIND_OBJECT);
             double speedOfWind = jsonObjectWind.getDouble(KEY_SPEED_OF_WIND);
             double directionOfWind = jsonObjectWind.getDouble(KEY_DIRECTION_OF_WIND);
-            weather = new Weather(description, temp, tempFeelsLike, pressure, humidity, speedOfWind, directionOfWind);
+            weather = new Weather(lon, lat, description, temp, tempFeelsLike, pressure, humidity, speedOfWind, directionOfWind, nameOfCity);
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -1,6 +1,8 @@
 package com.example.myweather.utils;
 
 public class Weather {
+    private double lon;
+    private double lat;
     private String description;
     private double temp;
     private double tempFeelsLike;
@@ -8,8 +10,11 @@ public class Weather {
     private double humidity;
     private double speedOfWind;
     private double directionOfWind;
+    private String nameOfCity;
 
-    public Weather(String description, double temp, double tempFeelsLike, double pressure, double humidity, double speedOfWind, double directionOfWind) {
+    public Weather(double lon, double lat, String description, double temp, double tempFeelsLike, double pressure, double humidity, double speedOfWind, double directionOfWind, String nameOfCity) {
+        this.lon = lon;
+        this.lat = lat;
         this.description = description;
         this.temp = temp;
         this.tempFeelsLike = tempFeelsLike;
@@ -17,6 +22,7 @@ public class Weather {
         this.humidity = humidity;
         this.speedOfWind = speedOfWind;
         this.directionOfWind = directionOfWind;
+        this.nameOfCity = nameOfCity;
     }
 
     public String getDescription() {
@@ -74,6 +80,30 @@ public class Weather {
 
     public void setDirectionOfWind(double directionOfWind) {
         this.directionOfWind = directionOfWind;
+    }
+
+    public double getLon() {
+        return lon;
+    }
+
+    public void setLon(double lon) {
+        this.lon = lon;
+    }
+
+    public double getLat() {
+        return lat;
+    }
+
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+
+    public String getNameOfCity() {
+        return nameOfCity;
+    }
+
+    public void setNameOfCity(String nameOfCity) {
+        this.nameOfCity = nameOfCity;
     }
 
     @Override

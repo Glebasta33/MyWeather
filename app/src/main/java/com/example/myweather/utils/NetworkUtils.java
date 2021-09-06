@@ -23,6 +23,8 @@ public class NetworkUtils {
     public static final String BASE_URL = "http://api.openweathermap.org/data/2.5/weather";
 
     public static final String PARAMS_CITY = "q";
+    public static final String PARAMS_LAT = "lat";
+    public static final String PARAMS_LON = "lon";
     public static final String PARAMS_API_KEY = "appid";
     public static final String PARAMS_LANG = "lang";
     public static final String PARAMS_UNITS = "units";
@@ -46,9 +48,39 @@ public class NetworkUtils {
         return url;
     }
 
+    private static URL buildURL(double lat, double lon) {
+        URL url = null;
+        Uri uri = Uri.parse(BASE_URL).buildUpon()
+                .appendQueryParameter(PARAMS_API_KEY, ApiKeyStorage.API_KEY)
+                .appendQueryParameter(PARAMS_LANG, VALUE_LANG)
+                .appendQueryParameter(PARAMS_UNITS, VALUE_UNITS)
+                .appendQueryParameter(PARAMS_LAT, Double.toString(lat))
+                .appendQueryParameter(PARAMS_LON, Double.toString(lon))
+                .build();
+        try {
+            url = new URL(uri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return url;
+    }
+
     public static JSONObject getJSON(String city) {
         JSONObject result = null;
         URL url = buildURL(city);
+        try {
+            result = new DownloadJSONTask().execute(url).get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public static JSONObject getJSON(double lat, double lon) {
+        JSONObject result = null;
+        URL url = buildURL(lat, lon);
         try {
             result = new DownloadJSONTask().execute(url).get();
         } catch (ExecutionException e) {

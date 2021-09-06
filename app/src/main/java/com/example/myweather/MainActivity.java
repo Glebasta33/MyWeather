@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView textViewTest;
     private EditText editTextNameOfCity;
+    private Button buttonFindByCity;
     private Button buttonFindNearly;
     private Weather weather;
 
@@ -44,29 +45,37 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         textViewTest = findViewById(R.id.textViewTest);
         editTextNameOfCity = findViewById(R.id.editTextNameOfCity);
+        buttonFindByCity = findViewById(R.id.buttonFindByCity);
         buttonFindNearly = findViewById(R.id.buttonFindNearly);
         MyLocationProvider.findLocation(MainActivity.this);
 
         buttonFindNearly.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                JSONObject jsonObject = NetworkUtils.getJSON(MyLocationProvider.getLatitude(), MyLocationProvider.getLongitude());
+                weather = JSONUtils.getWeatherFromJSON(jsonObject);
+                String weatherResult = String.format("Город: %s\nШирота: %s\nДолгота: %s\nПогода: %s\nТемпература: %s\nОщущается как: %s\nДавление: %s\nВлажность: %s\nСкорость вертра: %s\nНаправление: %s\n",
+                        weather.getNameOfCity(), weather.getLat(), weather.getLon(), weather.getDescription(), weather.getTemp(), weather.getTempFeelsLike(), weather.getPressure(), weather.getHumidity(), weather.getSpeedOfWind(), weather.getDirectionOfWind());
+                textViewTest.setText(weatherResult);
             }
         });
-    }
 
+        buttonFindByCity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String nameOfCity = editTextNameOfCity.getText().toString();
+                if (!nameOfCity.isEmpty()) {
+                    JSONObject jsonObject = NetworkUtils.getJSON(nameOfCity);
+                    weather = JSONUtils.getWeatherFromJSON(jsonObject);
+                    String weatherResult = String.format("Город: %s\nШирота: %s\nДолгота: %s\nПогода: %s\nТемпература: %s\nОщущается как: %s\nДавление: %s\nВлажность: %s\nСкорость вертра: %s\nНаправление: %s\n",
+                            weather.getNameOfCity(), weather.getLat(), weather.getLon(), weather.getDescription(), weather.getTemp(), weather.getTempFeelsLike(), weather.getPressure(), weather.getHumidity(), weather.getSpeedOfWind(), weather.getDirectionOfWind());
+                    textViewTest.setText(weatherResult);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Введите название города", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
-
-    public void onClickFind(View view) {
-        String nameOfCity = editTextNameOfCity.getText().toString();
-        if (!nameOfCity.isEmpty()) {
-           JSONObject jsonObject = NetworkUtils.getJSON(nameOfCity);
-            weather = JSONUtils.getWeatherFromJSON(jsonObject);
-            String weatherResult = String.format("Погода: %s\nТемпература: %s\nОщущается как: %s\nДавление: %s\nВлажность: %s\nСкорость вертра: %s\nНаправление: %s\n",
-            weather.getDescription(), weather.getTemp(), weather.getTempFeelsLike(), weather.getPressure(), weather.getHumidity(), weather.getSpeedOfWind(), weather.getDirectionOfWind());
-            textViewTest.setText(weatherResult);
-        } else {
-            Toast.makeText(this, "Введите название города", Toast.LENGTH_SHORT).show();
-        }
     }
 
 }
