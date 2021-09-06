@@ -12,40 +12,21 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayoutHeader"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:background="@color/yellow_header"
+        android:layout_height="48dp"
+        android:background="@color/header"
         app:layout_constraintBottom_toTopOf="@+id/constraintLayoutMiddle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_weight="1">
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Моя Погода"
-            android:textColor="@color/teal_700"
-            android:textSize="24dp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/switchDayOrWeek"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="packed" />
-
-        <!-- TODO: Найти на Udemy как сделать две надписи возле switch-->
         <Switch
             android:id="@+id/switchDayOrWeek"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.47"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView"
+            app:layout_constraintTop_toTopOf="parent"
             tools:ignore="UseSwitchCompatOrMaterialXml" />
 
         <TextView
@@ -55,7 +36,7 @@
             android:text="Сегодня"
             app:layout_constraintBottom_toBottomOf="@+id/switchDayOrWeek"
             app:layout_constraintEnd_toStartOf="@+id/switchDayOrWeek"
-            app:layout_constraintTop_toBottomOf="@+id/textView" />
+            app:layout_constraintTop_toTopOf="@+id/switchDayOrWeek" />
 
         <TextView
             android:id="@+id/textViewWeek"
@@ -64,7 +45,7 @@
             android:text="На неделю"
             app:layout_constraintBottom_toBottomOf="@+id/switchDayOrWeek"
             app:layout_constraintStart_toEndOf="@+id/switchDayOrWeek"
-            app:layout_constraintTop_toBottomOf="@+id/textView" />
+            app:layout_constraintTop_toTopOf="@+id/switchDayOrWeek" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -72,6 +53,7 @@
         android:id="@+id/constraintLayoutMiddle"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/constraintLayoutFooter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -86,10 +68,16 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-        <TextView
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
             android:id="@+id/textViewTest"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="match_parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
         </ScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -97,12 +85,12 @@
         android:id="@+id/constraintLayoutFooter"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@color/yellow_header"
+        android:background="@color/header"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayoutMiddle"
-        app:layout_constraintVertical_weight="4">
+        app:layout_constraintVertical_weight="3">
 
         <EditText
             android:id="@+id/editTextNameOfCity"
@@ -121,7 +109,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="48dp"
             android:text="Поиск"
-            android:onClick="onClickFind"
+            android:backgroundTint="@color/buttons"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/editTextNameOfCity" />
@@ -132,6 +120,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="48dp"
             android:text="Рядом"
+            android:backgroundTint="@color/buttons"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/buttonFindByCity" />

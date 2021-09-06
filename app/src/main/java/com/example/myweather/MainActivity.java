@@ -66,10 +66,15 @@ public class MainActivity extends AppCompatActivity {
                 String nameOfCity = editTextNameOfCity.getText().toString();
                 if (!nameOfCity.isEmpty()) {
                     JSONObject jsonObject = NetworkUtils.getJSON(nameOfCity);
-                    weather = JSONUtils.getWeatherFromJSON(jsonObject);
+                    try {
+                        weather = JSONUtils.getWeatherFromJSON(jsonObject);
                     String weatherResult = String.format("Город: %s\nШирота: %s\nДолгота: %s\nПогода: %s\nТемпература: %s\nОщущается как: %s\nДавление: %s\nВлажность: %s\nСкорость вертра: %s\nНаправление: %s\n",
                             weather.getNameOfCity(), weather.getLat(), weather.getLon(), weather.getDescription(), weather.getTemp(), weather.getTempFeelsLike(), weather.getPressure(), weather.getHumidity(), weather.getSpeedOfWind(), weather.getDirectionOfWind());
                     textViewTest.setText(weatherResult);
+                    } catch (Exception e) {
+                        Toast.makeText(MainActivity.this, "Некорректное название города", Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }
                 } else {
                     Toast.makeText(getApplicationContext(), "Введите название города", Toast.LENGTH_SHORT).show();
                 }
