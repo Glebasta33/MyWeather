@@ -1,12 +1,8 @@
 package com.example.myweather.utils;
 
-import android.net.Uri;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 
 public class JSONUtils {
     public static final String KEY_WEATHER_ARR = "weather";
