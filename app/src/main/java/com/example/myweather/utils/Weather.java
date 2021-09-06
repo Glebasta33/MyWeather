@@ -11,8 +11,9 @@ public class Weather {
     private double speedOfWind;
     private double directionOfWind;
     private String nameOfCity;
+    private String icon;
 
-    public Weather(double lon, double lat, String description, double temp, double tempFeelsLike, double pressure, double humidity, double speedOfWind, double directionOfWind, String nameOfCity) {
+    public Weather(double lon, double lat, String description, double temp, double tempFeelsLike, double pressure, double humidity, double speedOfWind, double directionOfWind, String nameOfCity, String icon) {
         this.lon = lon;
         this.lat = lat;
         this.description = description;
@@ -23,6 +24,7 @@ public class Weather {
         this.speedOfWind = speedOfWind;
         this.directionOfWind = directionOfWind;
         this.nameOfCity = nameOfCity;
+        this.icon = icon;
     }
 
     public String getDescription() {
@@ -104,6 +106,14 @@ public class Weather {
 
     public void setNameOfCity(String nameOfCity) {
         this.nameOfCity = nameOfCity;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 
     @Override

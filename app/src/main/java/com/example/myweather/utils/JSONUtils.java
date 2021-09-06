@@ -12,6 +12,7 @@ public class JSONUtils {
 
     public static final String KEY_WEATHER_ARR = "weather";
     public static final String KEY_DESCRIPTION = "description";
+    public static final String KEY_ICON = "icon";
 
     public static final String KEY_MAIN_OBJECT = "main";
     public static final String KEY_TEMP = "temp";
@@ -33,6 +34,7 @@ public class JSONUtils {
             double lon = jsonObjectCoordinates.getDouble(KEY_LON);
             double lat = jsonObjectCoordinates.getDouble(KEY_LAT);
             String description = jsonObject.getJSONArray(KEY_WEATHER_ARR).getJSONObject(0).getString(KEY_DESCRIPTION);
+            String icon = jsonObject.getJSONArray(KEY_WEATHER_ARR).getJSONObject(0).getString(KEY_ICON);
             JSONObject jsonObjectMain = jsonObject.getJSONObject(KEY_MAIN_OBJECT);
             double temp = jsonObjectMain.getDouble(KEY_TEMP);
             double tempFeelsLike = jsonObjectMain.getDouble(KEY_TEMP_FEELS_LIKE);
@@ -41,7 +43,7 @@ public class JSONUtils {
             JSONObject jsonObjectWind = jsonObject.getJSONObject(KEY_WIND_OBJECT);
             double speedOfWind = jsonObjectWind.getDouble(KEY_SPEED_OF_WIND);
             double directionOfWind = jsonObjectWind.getDouble(KEY_DIRECTION_OF_WIND);
-            weather = new Weather(lon, lat, description, temp, tempFeelsLike, pressure, humidity, speedOfWind, directionOfWind, nameOfCity);
+            weather = new Weather(lon, lat, description, temp, tempFeelsLike, pressure, humidity, speedOfWind, directionOfWind, nameOfCity, icon);
         } catch (JSONException e) {
             e.printStackTrace();
         }

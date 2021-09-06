@@ -1,10 +1,9 @@
 package com.example.myweather.utils;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.widget.Toast;
-
-import com.example.myweather.MainActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,7 +19,8 @@ import java.util.concurrent.ExecutionException;
 
 public class NetworkUtils {
 
-    public static final String BASE_URL = "http://api.openweathermap.org/data/2.5/weather";
+    public static final String BASE_URL_WEATHER = "http://api.openweathermap.org/data/2.5/weather";
+    public static final String BASE_URL_ONE_CALL = "https://api.openweathermap.org/data/2.5/onecall?lat=37.111&lon=55.123&exclude=minutely,hourly&appid=7cf64e1c8c797fed23127143efd266f2";
 
     public static final String PARAMS_CITY = "q";
     public static final String PARAMS_LAT = "lat";
@@ -32,9 +32,9 @@ public class NetworkUtils {
     public static final String VALUE_LANG = "ru";
     public static final String VALUE_UNITS = "metric";
 
-    private static URL buildURL(String city) {
+    private static URL buildWeatherURL(String city) {
         URL url = null;
-        Uri uri = Uri.parse(BASE_URL).buildUpon()
+        Uri uri = Uri.parse(BASE_URL_WEATHER).buildUpon()
                 .appendQueryParameter(PARAMS_API_KEY, ApiKeyStorage.API_KEY)
                 .appendQueryParameter(PARAMS_LANG, VALUE_LANG)
                 .appendQueryParameter(PARAMS_UNITS, VALUE_UNITS)
@@ -48,9 +48,9 @@ public class NetworkUtils {
         return url;
     }
 
-    private static URL buildURL(double lat, double lon) {
+    private static URL buildWeatherURL(double lat, double lon) {
         URL url = null;
-        Uri uri = Uri.parse(BASE_URL).buildUpon()
+        Uri uri = Uri.parse(BASE_URL_WEATHER).buildUpon()
                 .appendQueryParameter(PARAMS_API_KEY, ApiKeyStorage.API_KEY)
                 .appendQueryParameter(PARAMS_LANG, VALUE_LANG)
                 .appendQueryParameter(PARAMS_UNITS, VALUE_UNITS)
@@ -65,9 +65,11 @@ public class NetworkUtils {
         return url;
     }
 
+
+
     public static JSONObject getJSON(String city) {
         JSONObject result = null;
-        URL url = buildURL(city);
+        URL url = buildWeatherURL(city);
         try {
             result = new DownloadJSONTask().execute(url).get();
         } catch (ExecutionException e) {
@@ -80,7 +82,7 @@ public class NetworkUtils {
 
     public static JSONObject getJSON(double lat, double lon) {
         JSONObject result = null;
-        URL url = buildURL(lat, lon);
+        URL url = buildWeatherURL(lat, lon);
         try {
             result = new DownloadJSONTask().execute(url).get();
         } catch (ExecutionException e) {
@@ -89,6 +91,18 @@ public class NetworkUtils {
             e.printStackTrace();
         }
         return result;
+    }
+
+    public static Bitmap getIcon(Weather weather) {
+        Bitmap bitmap = null;
+        try {
+            bitmap = new DownloadIconTask().execute(weather.getIcon()).get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return bitmap;
     }
 
     public static class DownloadJSONTask extends AsyncTask<URL, Void, JSONObject> {
@@ -119,6 +133,29 @@ public class NetworkUtils {
                 e.printStackTrace();
             }
             return jsonObject;
+        }
+    }
+
+    public static class DownloadIconTask extends AsyncTask<String, Void, Bitmap> {
+
+        @Override
+        protected Bitmap doInBackground(String... strings) {
+            Bitmap bitmap = null;
+            URL url = null;
+            String urlArgument = "http://openweathermap.org/img/w/" + strings[0] + ".png";
+            HttpURLConnection httpURLConnection = null;
+            try {
+                url = new URL(urlArgument);
+                httpURLConnection = (HttpURLConnection) url.openConnection();
+                InputStream inputStream = httpURLConnection.getInputStream();
+                bitmap = BitmapFactory.decodeStream(inputStream);
+                return bitmap;
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
         }
     }
 

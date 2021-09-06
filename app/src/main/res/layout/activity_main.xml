@@ -42,13 +42,14 @@
             android:id="@+id/textViewWeek"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="На неделю"
+            android:text="7 дней"
             app:layout_constraintBottom_toBottomOf="@+id/switchDayOrWeek"
             app:layout_constraintStart_toEndOf="@+id/switchDayOrWeek"
             app:layout_constraintTop_toTopOf="@+id/switchDayOrWeek" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <!-- MIDDLE -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayoutMiddle"
         android:layout_width="match_parent"
@@ -60,25 +61,44 @@
         app:layout_constraintTop_toBottomOf="@+id/constraintLayoutHeader"
         app:layout_constraintVertical_weight="3">
 
-
-        <ScrollView
+        <!-- DAY -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/dayLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+
             <TextView
-            android:id="@+id/textViewTest"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+                android:id="@+id/textViewTest"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <!-- WEEK -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/weekLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/teal_700"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-        </ScrollView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -108,8 +128,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="48dp"
-            android:text="Поиск"
             android:backgroundTint="@color/buttons"
+            android:text="Поиск"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/editTextNameOfCity" />
@@ -119,8 +139,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="48dp"
-            android:text="Рядом"
             android:backgroundTint="@color/buttons"
+            android:text="Рядом"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/buttonFindByCity" />
