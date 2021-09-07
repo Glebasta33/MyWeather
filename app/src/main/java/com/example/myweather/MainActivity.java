@@ -38,28 +38,45 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView textViewTest;
     private EditText editTextNameOfCity;
     private Button buttonFindByCity;
     private Button buttonFindNearly;
-    private ConstraintLayout dayLayout;
     private ConstraintLayout weekLayout;
     private Switch switchWeather;
-    private Weather weather;
     private ImageView imageView;
+    private TextView textViewTemp;
+    private TextView textViewDescription;
+    private TextView textViewNameOfCity;
+    private TextView textViewLatitude;
+    private TextView textViewLongitude;
+    private TextView textViewFeelsLike;
+    private TextView textViewPressure;
+    private TextView textViewHumidity;
+    private TextView textViewDirectionOfWind;
+    private TextView textViewSpeedOfWind;
+
+    private Weather weather;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        textViewTest = findViewById(R.id.textViewTest);
         editTextNameOfCity = findViewById(R.id.editTextNameOfCity);
         buttonFindByCity = findViewById(R.id.buttonFindByCity);
         buttonFindNearly = findViewById(R.id.buttonFindNearly);
-        dayLayout = findViewById(R.id.dayLayout);
         weekLayout = findViewById(R.id.weekLayout);
         switchWeather = findViewById(R.id.switchDayOrWeek);
         imageView = findViewById(R.id.imageView);
+        textViewTemp = findViewById(R.id.textViewTempValue);
+        textViewDescription = findViewById(R.id.textViewDescriptionValue);
+        textViewNameOfCity = findViewById(R.id.textViewNameOfCityValue);
+        textViewLatitude = findViewById(R.id.textViewLatitudeValue);
+        textViewLongitude = findViewById(R.id.textViewLongitudeValue);
+        textViewFeelsLike = findViewById(R.id.textViewFeelsLikeValue);
+        textViewPressure = findViewById(R.id.textViewPressureValue);
+        textViewHumidity = findViewById(R.id.textViewHumidityValue);
+        textViewDirectionOfWind = findViewById(R.id.textViewDirectionOfWindValue);
+        textViewSpeedOfWind = findViewById(R.id.textViewSpeedOfWindValue);
 
         MyLocationProvider.findLocation(MainActivity.this);
 
@@ -79,11 +96,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 JSONObject jsonObject = NetworkUtils.getJSON(MyLocationProvider.getLatitude(), MyLocationProvider.getLongitude());
                 weather = JSONUtils.getWeatherFromJSON(jsonObject);
-                String weatherResult = String.format("Город: %s\nШирота: %s\nДолгота: %s\nПогода: %s\nТемпература: %s°С\nОщущается как: %s°С\nДавление: %s\nВлажность: %s\nСкорость вертра: %s\nНаправление: %s\nIcon: %s",
-                        weather.getNameOfCity(), weather.getLat(), weather.getLon(), weather.getDescription(), weather.getTemp(), weather.getTempFeelsLike(), weather.getPressure(), weather.getHumidity(), weather.getSpeedOfWind(), weather.getDirectionOfWind(), weather.getIcon());
-                Bitmap bitmap = NetworkUtils.getIcon(weather);
-                textViewTest.setText(weatherResult);
-                imageView.setImageBitmap(bitmap);
+                updateUiData(weather);
             }
         });
 
@@ -95,12 +108,7 @@ public class MainActivity extends AppCompatActivity {
                     JSONObject jsonObject = NetworkUtils.getJSON(nameOfCity);
                     try {
                         weather = JSONUtils.getWeatherFromJSON(jsonObject);
-                        String weatherResult = String.format("Город: %s\nШирота: %s\nДолгота: %s\nПогода: %s\nТемпература: %s°С\nОщущается как: %s°С\nДавление: %s\nВлажность: %s\nСкорость вертра: %s\nНаправление: %s\nIcon: %s",
-                                weather.getNameOfCity(), weather.getLat(), weather.getLon(), weather.getDescription(), weather.getTemp(), weather.getTempFeelsLike(), weather.getPressure(), weather.getHumidity(), weather.getSpeedOfWind(), weather.getDirectionOfWind(), weather.getIcon());
-                        textViewTest.setText(weatherResult);
-                        Bitmap bitmap = NetworkUtils.getIcon(weather);
-                        textViewTest.setText(weatherResult);
-                        imageView.setImageBitmap(bitmap);
+                        updateUiData(weather);
                     } catch (Exception e) {
                         Toast.makeText(MainActivity.this, "Некорректное название города", Toast.LENGTH_SHORT).show();
                         e.printStackTrace();
@@ -110,7 +118,21 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
 
+    private void updateUiData(Weather w) {
+        Bitmap bitmap = NetworkUtils.getIcon(w);
+        imageView.setImageBitmap(bitmap);
+        textViewTemp.setText(String.format("%s°C", w.getTemp()));
+        textViewDescription.setText(String.format("%s", w.getDescription()));
+        textViewNameOfCity.setText(String.format("%s", w.getNameOfCity()));
+        textViewLatitude.setText(String.format("%s", w.getLat()));
+        textViewLongitude.setText(String.format("%s", w.getLon()));
+        textViewFeelsLike.setText(String.format("%s°C", w.getTempFeelsLike()));
+        textViewPressure.setText(String.format("%s", w.getPressure()));
+        textViewHumidity.setText(String.format("%s", w.getHumidity()));
+        textViewDirectionOfWind.setText(String.format("%s", w.getDirectionOfWind()));
+        textViewSpeedOfWind.setText(String.format("%s м/с", w.getSpeedOfWind()));
     }
 
 }
