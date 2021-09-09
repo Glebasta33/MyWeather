@@ -63,7 +63,7 @@ public class Weather {
     }
 
     public double getPressure() {
-        return pressure;
+        return pressure * 0.75;
     }
 
     public void setPressure(double pressure) {

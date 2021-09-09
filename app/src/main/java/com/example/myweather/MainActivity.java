@@ -2,11 +2,19 @@ package com.example.myweather;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +37,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -83,6 +92,11 @@ public class MainActivity extends AppCompatActivity {
     private TextView textViewDate7;
 
     private Weather currentWeather;
+    private SharedPreferences preferences;
+
+    private boolean isWifiConn;
+    private boolean isMobileConn;
+    private ConnectivityManager connMgr;
 
     private Date date;
 
@@ -137,7 +151,24 @@ public class MainActivity extends AppCompatActivity {
         textViewDate6 = findViewById(R.id.textViewDay6);
         textViewDate7 = findViewById(R.id.textViewDay7);
 
+        preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         currentWeather = new Weather();
+
+        if (preferences.contains("description")) {
+            currentWeather.setLat((double) preferences.getFloat("lat", 0));
+            currentWeather.setLon((double) preferences.getFloat("lon", 0));
+            currentWeather.setDescription(preferences.getString("description", " "));
+            currentWeather.setTemp((double) preferences.getFloat("temp", 0));
+            currentWeather.setTempFeelsLike((double) preferences.getFloat("tempFeelsLike", 0));
+            currentWeather.setPressure((double) preferences.getFloat("pressure", 0));
+            currentWeather.setHumidity((double) preferences.getFloat("humidity", 0));
+            currentWeather.setSpeedOfWind((double) preferences.getFloat("speedOfWind", 0));
+            currentWeather.setDirectionOfWind((double) preferences.getFloat("directionOfWind", 0));
+            currentWeather.setNameOfCity(preferences.getString("nameOfCity", " "));
+            currentWeather.setIcon(preferences.getString("icon", " "));
+            updateDayLayout(currentWeather);
+        }
+
         if (savedInstanceState != null) {
             currentWeather.setLat(savedInstanceState.getDouble("lat"));
             currentWeather.setLon(savedInstanceState.getDouble("lon"));
@@ -151,8 +182,6 @@ public class MainActivity extends AppCompatActivity {
             currentWeather.setNameOfCity(savedInstanceState.getString("nameOfCity"));
             currentWeather.setIcon(savedInstanceState.getString("icon"));
             updateDayLayout(currentWeather);
-            ArrayList<Weather> days = getArrayOfWeather(savedInstanceState.getDouble("lat"), savedInstanceState.getDouble("lon"));
-            setNextSevenDaysLayout(days);
         }
 
         date = new Date();
@@ -174,10 +203,17 @@ public class MainActivity extends AppCompatActivity {
         buttonFindNearly.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                currentWeather = getWeatherOfCurrentDay(MyLocationProvider.getLatitude(), MyLocationProvider.getLongitude());
-                updateDayLayout(currentWeather);
-                ArrayList<Weather> days = getArrayOfWeather(MyLocationProvider.getLatitude(), MyLocationProvider.getLongitude());
-                setNextSevenDaysLayout(days);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    checkConnectionState();
+                }
+                if (isMobileConn || isWifiConn) {
+                    currentWeather = getWeatherOfCurrentDay(MyLocationProvider.getLatitude(), MyLocationProvider.getLongitude());
+                    updateDayLayout(currentWeather);
+                    ArrayList<Weather> days = getArrayOfWeather(MyLocationProvider.getLatitude(), MyLocationProvider.getLongitude());
+                    setNextSevenDaysLayout(days);
+                } else {
+                    Toast.makeText(MainActivity.this, "Отсутвует подключение к интернету", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -187,14 +223,21 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String nameOfCity = editTextNameOfCity.getText().toString();
                 if (!nameOfCity.isEmpty()) {
-                    try {
-                        currentWeather = getWeatherOfCurrentDay(nameOfCity);
-                        updateDayLayout(currentWeather);
-                        ArrayList<Weather> days = getArrayOfWeather(currentWeather.getLat(), currentWeather.getLon());
-                        setNextSevenDaysLayout(days);
-                    } catch (Exception e) {
-                        Toast.makeText(MainActivity.this, "Некорректное название города", Toast.LENGTH_SHORT).show();
-                        e.printStackTrace();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        checkConnectionState();
+                    }
+                    if (isMobileConn || isWifiConn) {
+                        try {
+                            currentWeather = getWeatherOfCurrentDay(nameOfCity);
+                            updateDayLayout(currentWeather);
+                            ArrayList<Weather> days = getArrayOfWeather(currentWeather.getLat(), currentWeather.getLon());
+                            setNextSevenDaysLayout(days);
+                        } catch (Exception e) {
+                            Toast.makeText(MainActivity.this, "Некорректное название города", Toast.LENGTH_SHORT).show();
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Toast.makeText(MainActivity.this, "Отсутвует подключение к интернету", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Toast.makeText(getApplicationContext(), "Введите название города", Toast.LENGTH_SHORT).show();
@@ -205,16 +248,16 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateDayLayout(Weather w) {
         Picasso.get().load(w.getIconPath()).into(imageView);
-        textViewTemp.setText(String.format("%s°C", w.getTemp()));
+        textViewTemp.setText(String.format(Locale.getDefault(), "%.1f°C", w.getTemp()));
         textViewDescription.setText(String.format("%s", w.getDescription()));
         textViewNameOfCity.setText(String.format("%s", w.getNameOfCity()));
-        textViewLatitude.setText(String.format("%s", w.getLat()));
-        textViewLongitude.setText(String.format("%s", w.getLon()));
-        textViewFeelsLike.setText(String.format("%s°C", w.getTempFeelsLike()));
-        textViewPressure.setText(String.format("%s гПа", w.getPressure()));
-        textViewHumidity.setText(String.format("%s %%", w.getHumidity()));
+        textViewLatitude.setText(String.format(Locale.getDefault(), "%.4f", w.getLat()));
+        textViewLongitude.setText(String.format(Locale.getDefault(), "%.4f", w.getLon()));
+        textViewFeelsLike.setText(String.format(Locale.getDefault(), "%.1f°C", w.getTempFeelsLike()));
+        textViewPressure.setText(String.format(Locale.getDefault(), "%.1f мм рт. ст.", w.getPressure()));
+        textViewHumidity.setText(String.format(Locale.getDefault(), "%.1f %%", w.getHumidity()));
         textViewDirectionOfWind.setText(String.format("%s", w.getStringDirectionOfWind()));
-        textViewSpeedOfWind.setText(String.format("%s м/с", w.getSpeedOfWind()));
+        textViewSpeedOfWind.setText(String.format(Locale.getDefault(), "%.1f м/с", w.getSpeedOfWind()));
     }
 
     private Weather getWeatherOfCurrentDay(double lat, double lon) {
@@ -238,12 +281,11 @@ public class MainActivity extends AppCompatActivity {
         return days;
     }
 
-    private ViewGroup.LayoutParams getLayoutParamsForTempColumn(View v, double temp){
+    private ViewGroup.LayoutParams getLayoutParamsForTempColumn(View v, double temp) {
         ViewGroup.LayoutParams layoutParams = v.getLayoutParams();
         layoutParams.height = (int) temp * 10;
         return layoutParams;
     }
-
 
     private void setNextSevenDaysLayout(ArrayList<Weather> days) {
         Weather day1 = days.get(0);
@@ -262,13 +304,13 @@ public class MainActivity extends AppCompatActivity {
         viewColumnDay6.setLayoutParams(getLayoutParamsForTempColumn(viewColumnDay6, day6.getTemp()));
         viewColumnDay7.setLayoutParams(getLayoutParamsForTempColumn(viewColumnDay7, day7.getTemp()));
 
-        textViewTempDay1.setText(String.format("%s°", (int) day1.getTemp()));
-        textViewTempDay2.setText(String.format("%s°", (int) day2.getTemp()));
-        textViewTempDay3.setText(String.format("%s°", (int) day3.getTemp()));
-        textViewTempDay4.setText(String.format("%s°", (int) day4.getTemp()));
-        textViewTempDay5.setText(String.format("%s°", (int) day5.getTemp()));
-        textViewTempDay6.setText(String.format("%s°", (int) day6.getTemp()));
-        textViewTempDay7.setText(String.format("%s°", (int) day7.getTemp()));
+        textViewTempDay1.setText(String.format(Locale.getDefault(), "%.0f°", day1.getTemp()));
+        textViewTempDay2.setText(String.format(Locale.getDefault(), "%.0f°", day2.getTemp()));
+        textViewTempDay3.setText(String.format(Locale.getDefault(), "%.0f°", day3.getTemp()));
+        textViewTempDay4.setText(String.format(Locale.getDefault(), "%.0f°", day4.getTemp()));
+        textViewTempDay5.setText(String.format(Locale.getDefault(), "%.0f°", day5.getTemp()));
+        textViewTempDay6.setText(String.format(Locale.getDefault(), "%.0f°", day6.getTemp()));
+        textViewTempDay7.setText(String.format(Locale.getDefault(), "%.0f°", day7.getTemp()));
 
         Picasso.get().load(day1.getIconPath()).into(imageViewDay1);
         Picasso.get().load(day2.getIconPath()).into(imageViewDay2);
@@ -304,5 +346,37 @@ public class MainActivity extends AppCompatActivity {
         outState.putDouble("directionOfWind", currentWeather.getDirectionOfWind());
         outState.putString("nameOfCity", currentWeather.getNameOfCity());
         outState.putString("icon", currentWeather.getIcon());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        preferences.edit().putFloat("lat", (float) currentWeather.getLat()).apply();
+        preferences.edit().putFloat("lon", (float) currentWeather.getLon()).apply();
+        preferences.edit().putString("description", currentWeather.getDescription()).apply();
+        preferences.edit().putFloat("temp", (float) currentWeather.getTemp()).apply();
+        preferences.edit().putFloat("tempFeelsLike", (float) currentWeather.getTempFeelsLike()).apply();
+        preferences.edit().putFloat("pressure", (float) currentWeather.getPressure()).apply();
+        preferences.edit().putFloat("humidity", (float) currentWeather.getHumidity()).apply();
+        preferences.edit().putFloat("speedOfWind", (float) currentWeather.getSpeedOfWind()).apply();
+        preferences.edit().putFloat("directionOfWind", (float) currentWeather.getDirectionOfWind()).apply();
+        preferences.edit().putString("nameOfCity", currentWeather.getNameOfCity()).apply();
+        preferences.edit().putString("icon", currentWeather.getIcon()).apply();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void checkConnectionState() {
+        connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        isWifiConn = false;
+        isMobileConn = false;
+        for (Network network : connMgr.getAllNetworks()) {
+            NetworkInfo networkInfo = connMgr.getNetworkInfo(network);
+            if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+                isWifiConn |= networkInfo.isConnected();
+            }
+            if (networkInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
+                isMobileConn |= networkInfo.isConnected();
+            }
+        }
     }
 }
