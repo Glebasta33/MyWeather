@@ -13,6 +13,8 @@ public class Weather {
     private String nameOfCity;
     private String icon;
 
+    public Weather(){}
+
     public Weather(double lon, double lat, String description, double temp, double tempFeelsLike, double pressure, double humidity, double speedOfWind, double directionOfWind, String nameOfCity, String icon) {
         this.lon = lon;
         this.lat = lat;

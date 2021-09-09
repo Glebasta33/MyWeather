@@ -1,5 +1,6 @@
 package com.example.myweather;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -81,6 +82,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView textViewDate6;
     private TextView textViewDate7;
 
+    private Weather currentWeather;
+
     private Date date;
 
     @Override
@@ -134,6 +137,24 @@ public class MainActivity extends AppCompatActivity {
         textViewDate6 = findViewById(R.id.textViewDay6);
         textViewDate7 = findViewById(R.id.textViewDay7);
 
+        currentWeather = new Weather();
+        if (savedInstanceState != null) {
+            currentWeather.setLat(savedInstanceState.getDouble("lat"));
+            currentWeather.setLon(savedInstanceState.getDouble("lon"));
+            currentWeather.setDescription(savedInstanceState.getString("description"));
+            currentWeather.setTemp(savedInstanceState.getDouble("temp"));
+            currentWeather.setTempFeelsLike(savedInstanceState.getDouble("tempFeelsLike"));
+            currentWeather.setPressure(savedInstanceState.getDouble("pressure"));
+            currentWeather.setHumidity(savedInstanceState.getDouble("humidity"));
+            currentWeather.setSpeedOfWind(savedInstanceState.getDouble("speedOfWind"));
+            currentWeather.setDirectionOfWind(savedInstanceState.getDouble("directionOfWind"));
+            currentWeather.setNameOfCity(savedInstanceState.getString("nameOfCity"));
+            currentWeather.setIcon(savedInstanceState.getString("icon"));
+            updateDayLayout(currentWeather);
+            ArrayList<Weather> days = getArrayOfWeather(savedInstanceState.getDouble("lat"), savedInstanceState.getDouble("lon"));
+            setNextSevenDaysLayout(days);
+        }
+
         date = new Date();
         setDates();
 
@@ -153,7 +174,8 @@ public class MainActivity extends AppCompatActivity {
         buttonFindNearly.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateDayLayout(getWeatherOfCurrentDay(MyLocationProvider.getLatitude(), MyLocationProvider.getLongitude()));
+                currentWeather = getWeatherOfCurrentDay(MyLocationProvider.getLatitude(), MyLocationProvider.getLongitude());
+                updateDayLayout(currentWeather);
                 ArrayList<Weather> days = getArrayOfWeather(MyLocationProvider.getLatitude(), MyLocationProvider.getLongitude());
                 setNextSevenDaysLayout(days);
             }
@@ -166,9 +188,9 @@ public class MainActivity extends AppCompatActivity {
                 String nameOfCity = editTextNameOfCity.getText().toString();
                 if (!nameOfCity.isEmpty()) {
                     try {
-                        Weather weather = getWeatherOfCurrentDay(nameOfCity);
-                        updateDayLayout(weather);
-                        ArrayList<Weather> days = getArrayOfWeather(weather.getLat(), weather.getLon());
+                        currentWeather = getWeatherOfCurrentDay(nameOfCity);
+                        updateDayLayout(currentWeather);
+                        ArrayList<Weather> days = getArrayOfWeather(currentWeather.getLat(), currentWeather.getLon());
                         setNextSevenDaysLayout(days);
                     } catch (Exception e) {
                         Toast.makeText(MainActivity.this, "Некорректное название города", Toast.LENGTH_SHORT).show();
@@ -266,6 +288,21 @@ public class MainActivity extends AppCompatActivity {
         textViewDate5.setText(CalendarUtils.addDays(date, 5));
         textViewDate6.setText(CalendarUtils.addDays(date, 6));
         textViewDate7.setText(CalendarUtils.addDays(date, 7));
+    }
 
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putDouble("lat", currentWeather.getLat());
+        outState.putDouble("lon", currentWeather.getLon());
+        outState.putString("description", currentWeather.getDescription());
+        outState.putDouble("temp", currentWeather.getTemp());
+        outState.putDouble("tempFeelsLike", currentWeather.getTempFeelsLike());
+        outState.putDouble("pressure", currentWeather.getPressure());
+        outState.putDouble("humidity", currentWeather.getHumidity());
+        outState.putDouble("speedOfWind", currentWeather.getSpeedOfWind());
+        outState.putDouble("directionOfWind", currentWeather.getDirectionOfWind());
+        outState.putString("nameOfCity", currentWeather.getNameOfCity());
+        outState.putString("icon", currentWeather.getIcon());
     }
 }
