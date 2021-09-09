@@ -2,6 +2,7 @@ package com.example.myweather.utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import java.util.ArrayList;
 
 
 public class JSONUtils {
@@ -26,6 +27,10 @@ public class JSONUtils {
 
     public static final String KEY_NAME_OF_CITY = "name";
 
+    // for one call json request
+    public static final String KEY_DAILY = "daily";
+    public static final String KEY_TEMP_OF_DAY = "day";
+
     public static Weather getWeatherFromJSON(JSONObject jsonObject) {
         Weather weather = null;
         try {
@@ -48,5 +53,19 @@ public class JSONUtils {
             e.printStackTrace();
         }
         return weather;
+    }
+
+    public static synchronized ArrayList<Weather> getArrayOfWeatherFromJSON(JSONObject jsonObject) {
+        ArrayList<Weather> weatherArrayList = new ArrayList<>();
+        try {
+            for (int i = 0; i < 7; i ++) {
+                double temp = jsonObject.getJSONArray(KEY_DAILY).getJSONObject(i).getJSONObject(KEY_TEMP).getDouble(KEY_TEMP_OF_DAY);
+                String icon = jsonObject.getJSONArray(KEY_DAILY).getJSONObject(i).getJSONArray(KEY_WEATHER_ARR).getJSONObject(0).getString(KEY_ICON);
+                weatherArrayList.add(new Weather(temp, icon));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return weatherArrayList;
     }
 }

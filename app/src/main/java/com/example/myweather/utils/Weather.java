@@ -27,6 +27,15 @@ public class Weather {
         this.icon = icon;
     }
 
+    public Weather(double temp) {
+        this.temp = temp;
+    }
+
+    public Weather(double temp, String icon) {
+        this.temp = temp;
+        this.icon = icon;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -75,9 +84,13 @@ public class Weather {
         this.speedOfWind = speedOfWind;
     }
 
-    // TODO: написать метод, возвращающий название направления ветра
     public double getDirectionOfWind() {
         return directionOfWind;
+    }
+
+    public String getStringDirectionOfWind() {
+        String[] directions = new String[]{"↑ С", "↗ СВ", "→ В", "↘ ЮВ", "↓ Ю", "↙ ЮЗ", "← З", "↖ СЗ"};
+        return directions[(int) (Math.round(directionOfWind / 45) % 8)];
     }
 
     public void setDirectionOfWind(double directionOfWind) {
@@ -114,6 +127,10 @@ public class Weather {
 
     public void setIcon(String icon) {
         this.icon = icon;
+    }
+
+    public String getIconPath() {
+        return NetworkUtils.BASE_URL_IMAGE + icon + NetworkUtils.URL_PNG;
     }
 
     @Override

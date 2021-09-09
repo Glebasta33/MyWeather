@@ -69,17 +69,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
-
-<!--            <TextView-->
-<!--                android:id="@+id/textViewTest"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                app:layout_constraintEnd_toEndOf="@+id/imageView"-->
-<!--                app:layout_constraintStart_toStartOf="@+id/imageView"-->
-<!--                app:layout_constraintTop_toBottomOf="@+id/imageView" />-->
-
-
+            app:layout_constraintTop_toTopOf="parent" />
 
 
         <!-- WEEK -->
@@ -87,12 +77,21 @@
             android:id="@+id/weekLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/teal_700"
+            android:background="@color/abs_white"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
+
+            <include
+                layout="@layout/week_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

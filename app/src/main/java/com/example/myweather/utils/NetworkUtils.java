@@ -5,6 +5,8 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 
+import com.squareup.picasso.Picasso;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,7 +22,9 @@ import java.util.concurrent.ExecutionException;
 public class NetworkUtils {
 
     public static final String BASE_URL_WEATHER = "http://api.openweathermap.org/data/2.5/weather";
-    public static final String BASE_URL_ONE_CALL = "https://api.openweathermap.org/data/2.5/onecall?lat=37.111&lon=55.123&exclude=minutely,hourly&appid=7cf64e1c8c797fed23127143efd266f2";
+    public static final String BASE_URL_ONE_CALL = "https://api.openweathermap.org/data/2.5/onecall";
+    public static final String BASE_URL_IMAGE = "http://openweathermap.org/img/w/";
+    public static final String URL_PNG = ".png";
 
     public static final String PARAMS_CITY = "q";
     public static final String PARAMS_LAT = "lat";
@@ -28,9 +32,12 @@ public class NetworkUtils {
     public static final String PARAMS_API_KEY = "appid";
     public static final String PARAMS_LANG = "lang";
     public static final String PARAMS_UNITS = "units";
+    public static final String PARAMS_EXCLUDE = "exclude";
 
     public static final String VALUE_LANG = "ru";
     public static final String VALUE_UNITS = "metric";
+    public static final String VALUE_MINUTELY = "minutely";
+    public static final String VALUE_HOURLY = "hourly";
 
     private static URL buildWeatherURL(String city) {
         URL url = null;
@@ -66,8 +73,26 @@ public class NetworkUtils {
     }
 
 
+    private static URL buildOneCallURL(double lat, double lon) {
+        URL url = null;
+        Uri uri = Uri.parse(BASE_URL_ONE_CALL).buildUpon()
+                .appendQueryParameter(PARAMS_API_KEY, ApiKeyStorage.API_KEY)
+                .appendQueryParameter(PARAMS_LANG, VALUE_LANG)
+                .appendQueryParameter(PARAMS_UNITS, VALUE_UNITS)
+                .appendQueryParameter(PARAMS_EXCLUDE, VALUE_HOURLY)
+                .appendQueryParameter(PARAMS_EXCLUDE, VALUE_MINUTELY)
+                .appendQueryParameter(PARAMS_LAT, Double.toString(lat))
+                .appendQueryParameter(PARAMS_LON, Double.toString(lon))
+                .build();
+        try {
+            url = new URL(uri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return url;
+    }
 
-    public static JSONObject getJSON(String city) {
+    public static JSONObject getWeatherJSON(String city) {
         JSONObject result = null;
         URL url = buildWeatherURL(city);
         try {
@@ -80,7 +105,22 @@ public class NetworkUtils {
         return result;
     }
 
-    public static JSONObject getJSON(double lat, double lon) {
+
+    public static JSONObject getOneCallJSON(double lat, double lon) {
+        JSONObject result = null;
+        URL url = buildOneCallURL(lat, lon);
+        try {
+            result = new DownloadJSONTask().execute(url).get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+
+    public static JSONObject getWeatherJSON(double lat, double lon) {
         JSONObject result = null;
         URL url = buildWeatherURL(lat, lon);
         try {
@@ -106,7 +146,6 @@ public class NetworkUtils {
     }
 
     public static class DownloadJSONTask extends AsyncTask<URL, Void, JSONObject> {
-
         @Override
         protected JSONObject doInBackground(URL... urls) {
             if (urls == null || urls.length == 0) {
@@ -137,12 +176,11 @@ public class NetworkUtils {
     }
 
     public static class DownloadIconTask extends AsyncTask<String, Void, Bitmap> {
-
         @Override
         protected Bitmap doInBackground(String... strings) {
             Bitmap bitmap = null;
             URL url = null;
-            String urlArgument = "http://openweathermap.org/img/w/" + strings[0] + ".png";
+            String urlArgument = BASE_URL_IMAGE + strings[0] + URL_PNG;
             HttpURLConnection httpURLConnection = null;
             try {
                 url = new URL(urlArgument);
