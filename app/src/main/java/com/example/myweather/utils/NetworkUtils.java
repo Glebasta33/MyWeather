@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 public class NetworkUtils {
@@ -92,7 +93,7 @@ public class NetworkUtils {
         return url;
     }
 
-    public static JSONObject getWeatherJSON(String city) {
+    private static JSONObject getWeatherJSON(String city) {
         JSONObject result = null;
         URL url = buildWeatherURL(city);
         try {
@@ -106,7 +107,7 @@ public class NetworkUtils {
     }
 
 
-    public static JSONObject getOneCallJSON(double lat, double lon) {
+    private static JSONObject getOneCallJSON(double lat, double lon) {
         JSONObject result = null;
         URL url = buildOneCallURL(lat, lon);
         try {
@@ -120,7 +121,7 @@ public class NetworkUtils {
     }
 
 
-    public static JSONObject getWeatherJSON(double lat, double lon) {
+    private static JSONObject getWeatherJSON(double lat, double lon) {
         JSONObject result = null;
         URL url = buildWeatherURL(lat, lon);
         try {
@@ -131,18 +132,6 @@ public class NetworkUtils {
             e.printStackTrace();
         }
         return result;
-    }
-
-    public static Bitmap getIcon(Weather weather) {
-        Bitmap bitmap = null;
-        try {
-            bitmap = new DownloadIconTask().execute(weather.getIcon()).get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return bitmap;
     }
 
     public static class DownloadJSONTask extends AsyncTask<URL, Void, JSONObject> {
@@ -175,6 +164,7 @@ public class NetworkUtils {
         }
     }
 
+    // depricated
     public static class DownloadIconTask extends AsyncTask<String, Void, Bitmap> {
         @Override
         protected Bitmap doInBackground(String... strings) {
@@ -196,5 +186,40 @@ public class NetworkUtils {
             return null;
         }
     }
+
+    // depricated
+    public static Bitmap getIcon(Weather weather) {
+        Bitmap bitmap = null;
+        try {
+            bitmap = new DownloadIconTask().execute(weather.getIcon()).get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return bitmap;
+    }
+
+    public static Weather getWeatherOfCurrentDay(double lat, double lon) {
+        Weather weather = null;
+        JSONObject jsonObject = getWeatherJSON(lat, lon);
+        weather = JSONUtils.getWeatherFromJSON(jsonObject);
+        return weather;
+    }
+
+    public static Weather getWeatherOfCurrentDay(String nameOfCity) {
+        Weather weather = null;
+        JSONObject jsonObject = getWeatherJSON(nameOfCity);
+        weather = JSONUtils.getWeatherFromJSON(jsonObject);
+        return weather;
+    }
+
+    public static ArrayList<Weather> getArrayOfWeather(double lat, double lon) {
+        ArrayList<Weather> days = null;
+        JSONObject jsonObjectOneCall = getOneCallJSON(lat, lon);
+        days = JSONUtils.getArrayOfWeatherFromJSON(jsonObjectOneCall);
+        return days;
+    }
+
 
 }

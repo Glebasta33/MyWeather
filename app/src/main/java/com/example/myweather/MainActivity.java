@@ -151,6 +151,8 @@ public class MainActivity extends AppCompatActivity {
         textViewDate6 = findViewById(R.id.textViewDay6);
         textViewDate7 = findViewById(R.id.textViewDay7);
 
+        MyLocationProvider.findLocation(MainActivity.this);
+
         preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         currentWeather = new Weather();
 
@@ -187,8 +189,6 @@ public class MainActivity extends AppCompatActivity {
         date = new Date();
         setDates();
 
-        MyLocationProvider.findLocation(MainActivity.this);
-
         switchWeather.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -207,9 +207,9 @@ public class MainActivity extends AppCompatActivity {
                     checkConnectionState();
                 }
                 if (isMobileConn || isWifiConn) {
-                    currentWeather = getWeatherOfCurrentDay(MyLocationProvider.getLatitude(), MyLocationProvider.getLongitude());
+                    currentWeather = NetworkUtils.getWeatherOfCurrentDay(MyLocationProvider.getLatitude(), MyLocationProvider.getLongitude());
                     updateDayLayout(currentWeather);
-                    ArrayList<Weather> days = getArrayOfWeather(MyLocationProvider.getLatitude(), MyLocationProvider.getLongitude());
+                    ArrayList<Weather> days = NetworkUtils.getArrayOfWeather(MyLocationProvider.getLatitude(), MyLocationProvider.getLongitude());
                     setNextSevenDaysLayout(days);
                 } else {
                     Toast.makeText(MainActivity.this, "Отсутвует подключение к интернету", Toast.LENGTH_SHORT).show();
@@ -228,9 +228,9 @@ public class MainActivity extends AppCompatActivity {
                     }
                     if (isMobileConn || isWifiConn) {
                         try {
-                            currentWeather = getWeatherOfCurrentDay(nameOfCity);
+                            currentWeather = NetworkUtils.getWeatherOfCurrentDay(nameOfCity);
                             updateDayLayout(currentWeather);
-                            ArrayList<Weather> days = getArrayOfWeather(currentWeather.getLat(), currentWeather.getLon());
+                            ArrayList<Weather> days = NetworkUtils.getArrayOfWeather(currentWeather.getLat(), currentWeather.getLon());
                             setNextSevenDaysLayout(days);
                         } catch (Exception e) {
                             Toast.makeText(MainActivity.this, "Некорректное название города", Toast.LENGTH_SHORT).show();
@@ -260,26 +260,6 @@ public class MainActivity extends AppCompatActivity {
         textViewSpeedOfWind.setText(String.format(Locale.getDefault(), "%.1f м/с", w.getSpeedOfWind()));
     }
 
-    private Weather getWeatherOfCurrentDay(double lat, double lon) {
-        Weather weather = null;
-        JSONObject jsonObject = NetworkUtils.getWeatherJSON(lat, lon);
-        weather = JSONUtils.getWeatherFromJSON(jsonObject);
-        return weather;
-    }
-
-    private Weather getWeatherOfCurrentDay(String nameOfCity) {
-        Weather weather = null;
-        JSONObject jsonObject = NetworkUtils.getWeatherJSON(nameOfCity);
-        weather = JSONUtils.getWeatherFromJSON(jsonObject);
-        return weather;
-    }
-
-    private ArrayList<Weather> getArrayOfWeather(double lat, double lon) {
-        ArrayList<Weather> days = null;
-        JSONObject jsonObjectOneCall = NetworkUtils.getOneCallJSON(lat, lon);
-        days = JSONUtils.getArrayOfWeatherFromJSON(jsonObjectOneCall);
-        return days;
-    }
 
     private ViewGroup.LayoutParams getLayoutParamsForTempColumn(View v, double temp) {
         ViewGroup.LayoutParams layoutParams = v.getLayoutParams();
