@@ -164,7 +164,7 @@ public class NetworkUtils {
         }
     }
 
-    // depricated
+    // deprecated
     public static class DownloadIconTask extends AsyncTask<String, Void, Bitmap> {
         @Override
         protected Bitmap doInBackground(String... strings) {
@@ -187,7 +187,7 @@ public class NetworkUtils {
         }
     }
 
-    // depricated
+    // deprecated
     public static Bitmap getIcon(Weather weather) {
         Bitmap bitmap = null;
         try {
@@ -220,6 +220,5 @@ public class NetworkUtils {
         days = JSONUtils.getArrayOfWeatherFromJSON(jsonObjectOneCall);
         return days;
     }
-
 
 }

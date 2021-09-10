@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:baselineAligned="false">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayoutDay1"
@@ -25,7 +26,8 @@
             android:id="@+id/imageViewDay1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/textViewTempDay1" />
+            app:layout_constraintBottom_toTopOf="@+id/textViewTempDay1"
+            android:contentDescription="@string/content_description_weather" />
 
         <TextView
             android:id="@+id/textViewTempDay1"
@@ -67,7 +69,8 @@
             android:id="@+id/imageViewDay2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/textViewTempDay2" />
+            app:layout_constraintBottom_toTopOf="@+id/textViewTempDay2"
+            android:contentDescription="@string/content_description_weather" />
 
         <TextView
             android:id="@+id/textViewTempDay2"
@@ -108,7 +111,8 @@
             android:id="@+id/imageViewDay3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/textViewTempDay3" />
+            app:layout_constraintBottom_toTopOf="@+id/textViewTempDay3"
+            android:contentDescription="@string/content_description_weather" />
 
         <TextView
             android:id="@+id/textViewTempDay3"
@@ -150,7 +154,8 @@
             android:id="@+id/imageViewDay4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/textViewTempDay4" />
+            app:layout_constraintBottom_toTopOf="@+id/textViewTempDay4"
+            android:contentDescription="@string/content_description_weather" />
 
         <TextView
             android:id="@+id/textViewTempDay4"
@@ -191,7 +196,8 @@
             android:id="@+id/imageViewDay5"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/textViewTempDay5" />
+            app:layout_constraintBottom_toTopOf="@+id/textViewTempDay5"
+            android:contentDescription="@string/content_description_weather" />
 
         <TextView
             android:id="@+id/textViewTempDay5"
@@ -233,7 +239,8 @@
             android:id="@+id/imageViewDay6"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/textViewTempDay6" />
+            app:layout_constraintBottom_toTopOf="@+id/textViewTempDay6"
+            android:contentDescription="@string/content_description_weather" />
 
         <TextView
             android:id="@+id/textViewTempDay6"
@@ -275,7 +282,8 @@
             android:id="@+id/imageViewDay7"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/textViewTempDay7" />
+            app:layout_constraintBottom_toTopOf="@+id/textViewTempDay7"
+            android:contentDescription="@string/content_description_weather" />
 
         <TextView
             android:id="@+id/textViewTempDay7"

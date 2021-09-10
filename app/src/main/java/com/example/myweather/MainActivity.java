@@ -1,21 +1,18 @@
 package com.example.myweather;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -27,13 +24,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.myweather.utils.CalendarUtils;
-import com.example.myweather.utils.JSONUtils;
 import com.example.myweather.utils.MyLocationProvider;
 import com.example.myweather.utils.NetworkUtils;
 import com.example.myweather.utils.Weather;
 import com.squareup.picasso.Picasso;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -91,12 +85,11 @@ public class MainActivity extends AppCompatActivity {
     private TextView textViewDate6;
     private TextView textViewDate7;
 
-    private Weather currentWeather;
     private SharedPreferences preferences;
+    private Weather currentWeather;
 
     private boolean isWifiConn;
     private boolean isMobileConn;
-    private ConnectivityManager connMgr;
 
     private Date date;
 
@@ -184,6 +177,13 @@ public class MainActivity extends AppCompatActivity {
             currentWeather.setNameOfCity(savedInstanceState.getString("nameOfCity"));
             currentWeather.setIcon(savedInstanceState.getString("icon"));
             updateDayLayout(currentWeather);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                checkConnectionState();
+            }
+            if (isMobileConn || isWifiConn) {
+                ArrayList<Weather> days = NetworkUtils.getArrayOfWeather(currentWeather.getLat(), currentWeather.getLon());
+                setNextSevenDaysLayout(days);
+            }
         }
 
         date = new Date();
@@ -212,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
                     ArrayList<Weather> days = NetworkUtils.getArrayOfWeather(MyLocationProvider.getLatitude(), MyLocationProvider.getLongitude());
                     setNextSevenDaysLayout(days);
                 } else {
-                    Toast.makeText(MainActivity.this, "Отсутвует подключение к интернету", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, R.string.toas_no_connection, Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -233,14 +233,14 @@ public class MainActivity extends AppCompatActivity {
                             ArrayList<Weather> days = NetworkUtils.getArrayOfWeather(currentWeather.getLat(), currentWeather.getLon());
                             setNextSevenDaysLayout(days);
                         } catch (Exception e) {
-                            Toast.makeText(MainActivity.this, "Некорректное название города", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, R.string.toast_city_not_found, Toast.LENGTH_SHORT).show();
                             e.printStackTrace();
                         }
                     } else {
-                        Toast.makeText(MainActivity.this, "Отсутвует подключение к интернету", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, R.string.toas_no_connection, Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(getApplicationContext(), "Введите название города", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), R.string.toast_input_city, Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -248,22 +248,22 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateDayLayout(Weather w) {
         Picasso.get().load(w.getIconPath()).into(imageView);
-        textViewTemp.setText(String.format(Locale.getDefault(), "%.1f°C", w.getTemp()));
+        textViewTemp.setText(String.format(Locale.getDefault(), "%.1f" + getString(R.string.value_of_temp_celsium), w.getTemp()));
         textViewDescription.setText(String.format("%s", w.getDescription()));
         textViewNameOfCity.setText(String.format("%s", w.getNameOfCity()));
         textViewLatitude.setText(String.format(Locale.getDefault(), "%.4f", w.getLat()));
         textViewLongitude.setText(String.format(Locale.getDefault(), "%.4f", w.getLon()));
-        textViewFeelsLike.setText(String.format(Locale.getDefault(), "%.1f°C", w.getTempFeelsLike()));
-        textViewPressure.setText(String.format(Locale.getDefault(), "%.1f мм рт. ст.", w.getPressure()));
+        textViewFeelsLike.setText(String.format(Locale.getDefault(), "%.1f" + getString(R.string.value_of_temp_celsium), w.getTempFeelsLike()));
+        textViewPressure.setText(String.format(Locale.getDefault(), "%.1f " + getString(R.string.value_of_pressure_mm), w.getPressure()));
         textViewHumidity.setText(String.format(Locale.getDefault(), "%.1f %%", w.getHumidity()));
         textViewDirectionOfWind.setText(String.format("%s", w.getStringDirectionOfWind()));
-        textViewSpeedOfWind.setText(String.format(Locale.getDefault(), "%.1f м/с", w.getSpeedOfWind()));
+        textViewSpeedOfWind.setText(String.format(Locale.getDefault(), "%.1f " + getString(R.string.value_of_speed_of_wind_meters_in_sec), w.getSpeedOfWind()));
     }
 
 
     private ViewGroup.LayoutParams getLayoutParamsForTempColumn(View v, double temp) {
         ViewGroup.LayoutParams layoutParams = v.getLayoutParams();
-        layoutParams.height = (int) temp * 10;
+        layoutParams.height = (int) temp * 15;
         return layoutParams;
     }
 
@@ -346,11 +346,11 @@ public class MainActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void checkConnectionState() {
-        connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         isWifiConn = false;
         isMobileConn = false;
-        for (Network network : connMgr.getAllNetworks()) {
-            NetworkInfo networkInfo = connMgr.getNetworkInfo(network);
+        for (Network network : connectivityManager.getAllNetworks()) {
+            NetworkInfo networkInfo = connectivityManager.getNetworkInfo(network);
             if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
                 isWifiConn |= networkInfo.isConnected();
             }

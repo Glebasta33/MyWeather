@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="header_height">48dp</dimen>
+    <dimen name="header_height_land">36dp</dimen>
+    <dimen name="margin_bottom_day_land">24dp</dimen>
+    <dimen name="padding_horizontal_day_layout">24dp</dimen>
+    <dimen name="main_image_size">64dp</dimen>
+    <dimen name="text_size_of_main_temp">24sp</dimen>
+    <dimen name="margin_between_lines_of_day">4dp</dimen>
+    <dimen name="margin_before_values">8dp</dimen>
+    <dimen name="height_of_line_view">1dp</dimen>
+    <dimen name="margins_in_footer">48dp</dimen>
+    <dimen name="margin_top_in_footer">8dp</dimen>
+</resources>
