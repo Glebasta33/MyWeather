@@ -1,34 +1,41 @@
 <resources>
     <string name="app_name">MyWeather</string>
-    <string name="hint_enter_name_of_city">Введите название города</string>
-    <string name="switch_today">Сегодня</string>
-    <string name="switch_seven_days">7 дней</string>
-    <string name="button_find_by_city">Поиск</string>
-    <string name="button_find_nearly">Рядом</string>
-    <string name="toas_no_connection">Отсутвует подключение к интернету</string>
-    <string name="toast_input_city">Введите название города</string>
-    <string name="toast_city_not_found">Некорректное название города</string>
-    <string name="value_of_speed_of_wind_meters_in_sec">м/с</string>
-    <string name="value_of_pressure_mm">мм рт. ст.</string>
-    <string name="value_of_temp_celsium">°C</string>
-    <string name="content_description_weather">Погода</string>
-    <string name="name_of_city">Город:</string>
-    <string name="latitude">Широта:</string>
-    <string name="longitude">Долгота:</string>
-    <string name="temp_feels_like">Температура чувствуется как:</string>
-    <string name="pressure">Давление:</string>
-    <string name="humidity">Влажность:</string>
-    <string name="direction_of_wind">Направление ветра:</string>
-    <string name="speed_of_wind">Скорость ветра:</string>
+    <string name="hint_enter_name_of_city">Enter the name of the city</string>
+    <string name="switch_today">Today</string>
+    <string name="switch_seven_days">7 days</string>
+    <string name="button_find_by_city">Search</string>
+    <string name="button_find_nearly">Nearby</string>
+    <string name="toast_no_connection">No internet connection</string>
+    <string name="toast_input_city">Enter the name of the city</string>
+    <string name="toast_city_not_found">City not found</string>
+    <string name="value_of_speed_of_wind_meters_in_sec">m/s</string>
+    <string name="value_of_pressure_mm">mmHg</string>
+    <string name="value_of_temp_calcium">°C</string>
+    <string name="content_description_weather">Weather</string>
+    <string name="name_of_city">City:</string>
+    <string name="latitude">Latitude:</string>
+    <string name="longitude">Longitude:</string>
+    <string name="temp_feels_like">The temperature feels like:</string>
+    <string name="pressure">Pressure:</string>
+    <string name="humidity">Humidity:</string>
+    <string name="direction_of_wind">Wind direction:</string>
+    <string name="speed_of_wind">Wind speed:</string>
+    <string name="units">Units:</string>
+    <string name="temp_fahrenheit">°F</string>
+
+    <string-array name="spinner_units">
+        <item>Metric</item>
+        <item>Standard</item>
+    </string-array>
 
     <string-array name="directions_of_wind">
-        <item>↓ С</item>
-        <item>↙ СВ</item>
-        <item>← В</item>
-        <item>↖ ЮВ</item>
-        <item>↑ Ю</item>
-        <item>↗ ЮЗ</item>
-        <item>→ З</item>
-        <item>↘ СЗ</item>
+        <item>↓ N</item>
+        <item>↙ NE</item>
+        <item>← E</item>
+        <item>↖ SE</item>
+        <item>↑ S</item>
+        <item>↗ SW</item>
+        <item>→ W</item>
+        <item>↘ NW</item>
     </string-array>
 </resources>

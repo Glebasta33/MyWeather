@@ -12,4 +12,5 @@
     <color name="middle">#B9E6F3</color>
     <color name="buttons">#025167</color>
     <color name="temp_column">#0084A8</color>
+    <color name="units">#aaaaaa</color>
 </resources>

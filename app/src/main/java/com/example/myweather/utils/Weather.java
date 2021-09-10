@@ -90,9 +90,8 @@ public class Weather {
         return directionOfWind;
     }
 
-    public String getStringDirectionOfWind() {  //
-        String[] directions = new String[]{"↓ С", "↙ СВ", "← В", "↖ ЮВ", "↑ Ю", "↗ ЮЗ", "→ З", "↘ СЗ"};
-        return directions[(int) (Math.round(directionOfWind / 45) % 8)];
+    public int getIndexOfDirectionsArray() {  //
+        return (int) (Math.round(directionOfWind / 45) % 8);
     }
 
     public void setDirectionOfWind(double directionOfWind) {

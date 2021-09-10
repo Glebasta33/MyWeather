@@ -35,17 +35,17 @@ public class NetworkUtils {
     public static final String PARAMS_UNITS = "units";
     public static final String PARAMS_EXCLUDE = "exclude";
 
-    public static final String VALUE_LANG = "ru";
-    public static final String VALUE_UNITS = "metric";
+    public static final String VALUE_UNITS_METRIC = "metric";
+    public static final String VALUE_UNITS_STANDARD = "standard";
     public static final String VALUE_MINUTELY = "minutely";
     public static final String VALUE_HOURLY = "hourly";
 
-    private static URL buildWeatherURL(String city) {
+    private static URL buildWeatherURL(String city, String lang, String units) {
         URL url = null;
         Uri uri = Uri.parse(BASE_URL_WEATHER).buildUpon()
                 .appendQueryParameter(PARAMS_API_KEY, ApiKeyStorage.API_KEY)
-                .appendQueryParameter(PARAMS_LANG, VALUE_LANG)
-                .appendQueryParameter(PARAMS_UNITS, VALUE_UNITS)
+                .appendQueryParameter(PARAMS_LANG, lang)
+                .appendQueryParameter(PARAMS_UNITS, units)
                 .appendQueryParameter(PARAMS_CITY, city)
                 .build();
         try {
@@ -56,12 +56,12 @@ public class NetworkUtils {
         return url;
     }
 
-    private static URL buildWeatherURL(double lat, double lon) {
+    private static URL buildWeatherURL(double lat, double lon, String lang, String units) {
         URL url = null;
         Uri uri = Uri.parse(BASE_URL_WEATHER).buildUpon()
                 .appendQueryParameter(PARAMS_API_KEY, ApiKeyStorage.API_KEY)
-                .appendQueryParameter(PARAMS_LANG, VALUE_LANG)
-                .appendQueryParameter(PARAMS_UNITS, VALUE_UNITS)
+                .appendQueryParameter(PARAMS_LANG, lang)
+                .appendQueryParameter(PARAMS_UNITS, units)
                 .appendQueryParameter(PARAMS_LAT, Double.toString(lat))
                 .appendQueryParameter(PARAMS_LON, Double.toString(lon))
                 .build();
@@ -74,12 +74,12 @@ public class NetworkUtils {
     }
 
 
-    private static URL buildOneCallURL(double lat, double lon) {
+    private static URL buildOneCallURL(double lat, double lon, String lang, String units) {
         URL url = null;
         Uri uri = Uri.parse(BASE_URL_ONE_CALL).buildUpon()
                 .appendQueryParameter(PARAMS_API_KEY, ApiKeyStorage.API_KEY)
-                .appendQueryParameter(PARAMS_LANG, VALUE_LANG)
-                .appendQueryParameter(PARAMS_UNITS, VALUE_UNITS)
+                .appendQueryParameter(PARAMS_LANG, lang)
+                .appendQueryParameter(PARAMS_UNITS, units)
                 .appendQueryParameter(PARAMS_EXCLUDE, VALUE_HOURLY)
                 .appendQueryParameter(PARAMS_EXCLUDE, VALUE_MINUTELY)
                 .appendQueryParameter(PARAMS_LAT, Double.toString(lat))
@@ -93,9 +93,9 @@ public class NetworkUtils {
         return url;
     }
 
-    private static JSONObject getWeatherJSON(String city) {
+    private static JSONObject getWeatherJSON(String city, String lang, String units) {
         JSONObject result = null;
-        URL url = buildWeatherURL(city);
+        URL url = buildWeatherURL(city, lang, units);
         try {
             result = new DownloadJSONTask().execute(url).get();
         } catch (ExecutionException e) {
@@ -107,9 +107,9 @@ public class NetworkUtils {
     }
 
 
-    private static JSONObject getOneCallJSON(double lat, double lon) {
+    private static JSONObject getOneCallJSON(double lat, double lon, String lang, String units) {
         JSONObject result = null;
-        URL url = buildOneCallURL(lat, lon);
+        URL url = buildOneCallURL(lat, lon, lang, units);
         try {
             result = new DownloadJSONTask().execute(url).get();
         } catch (ExecutionException e) {
@@ -121,9 +121,9 @@ public class NetworkUtils {
     }
 
 
-    private static JSONObject getWeatherJSON(double lat, double lon) {
+    private static JSONObject getWeatherJSON(double lat, double lon, String lang, String units) {
         JSONObject result = null;
-        URL url = buildWeatherURL(lat, lon);
+        URL url = buildWeatherURL(lat, lon, lang, units);
         try {
             result = new DownloadJSONTask().execute(url).get();
         } catch (ExecutionException e) {
@@ -200,23 +200,23 @@ public class NetworkUtils {
         return bitmap;
     }
 
-    public static Weather getWeatherOfCurrentDay(double lat, double lon) {
+    public static Weather getWeatherOfCurrentDay(double lat, double lon, String lang, String units) {
         Weather weather = null;
-        JSONObject jsonObject = getWeatherJSON(lat, lon);
+        JSONObject jsonObject = getWeatherJSON(lat, lon, lang, units);
         weather = JSONUtils.getWeatherFromJSON(jsonObject);
         return weather;
     }
 
-    public static Weather getWeatherOfCurrentDay(String nameOfCity) {
+    public static Weather getWeatherOfCurrentDay(String nameOfCity, String lang, String units) {
         Weather weather = null;
-        JSONObject jsonObject = getWeatherJSON(nameOfCity);
+        JSONObject jsonObject = getWeatherJSON(nameOfCity, lang, units);
         weather = JSONUtils.getWeatherFromJSON(jsonObject);
         return weather;
     }
 
-    public static ArrayList<Weather> getArrayOfWeather(double lat, double lon) {
+    public static ArrayList<Weather> getArrayOfWeather(double lat, double lon, String lang, String units) {
         ArrayList<Weather> days = null;
-        JSONObject jsonObjectOneCall = getOneCallJSON(lat, lon);
+        JSONObject jsonObjectOneCall = getOneCallJSON(lat, lon, lang, units);
         days = JSONUtils.getArrayOfWeatherFromJSON(jsonObjectOneCall);
         return days;
     }

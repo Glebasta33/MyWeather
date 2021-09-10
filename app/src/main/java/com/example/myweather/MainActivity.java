@@ -15,10 +15,12 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     // general layout
     private EditText editTextNameOfCity;
     private Button buttonFindByCity;
-    private Button buttonFindNearly;
+    private Button buttonFindNearby;
     private ConstraintLayout weekLayout;
     private Switch switchWeather;
 
@@ -54,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView textViewHumidity;
     private TextView textViewDirectionOfWind;
     private TextView textViewSpeedOfWind;
+    private Spinner spinnerUnits;
 
     // layout of next 7 days
     private View viewColumnDay1;
@@ -87,21 +90,25 @@ public class MainActivity extends AppCompatActivity {
 
     private SharedPreferences preferences;
     private Weather currentWeather;
-
     private boolean isWifiConn;
     private boolean isMobileConn;
-
     private Date date;
+    public static String lang;
+    public static String units;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        lang = Locale.getDefault().getLanguage();
+
         editTextNameOfCity = findViewById(R.id.editTextNameOfCity);
         buttonFindByCity = findViewById(R.id.buttonFindByCity);
-        buttonFindNearly = findViewById(R.id.buttonFindNearly);
+        buttonFindNearby = findViewById(R.id.buttonFindNearby);
         weekLayout = findViewById(R.id.weekLayout);
         switchWeather = findViewById(R.id.switchDayOrWeek);
+        spinnerUnits = findViewById(R.id.spinnerUnits);
 
         imageView = findViewById(R.id.imageView);
         textViewTemp = findViewById(R.id.textViewTempValue);
@@ -144,6 +151,10 @@ public class MainActivity extends AppCompatActivity {
         textViewDate6 = findViewById(R.id.textViewDay6);
         textViewDate7 = findViewById(R.id.textViewDay7);
 
+        units = NetworkUtils.VALUE_UNITS_METRIC;
+        ArrayAdapter<String> adapterForSpinnerUnits = new ArrayAdapter<>(this, R.layout.spinner_item, getResources().getStringArray(R.array.spinner_units));
+        spinnerUnits.setAdapter(adapterForSpinnerUnits);
+
         MyLocationProvider.findLocation(MainActivity.this);
 
         preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -165,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (savedInstanceState != null) {
+            units = savedInstanceState.getString("units");
             currentWeather.setLat(savedInstanceState.getDouble("lat"));
             currentWeather.setLon(savedInstanceState.getDouble("lon"));
             currentWeather.setDescription(savedInstanceState.getString("description"));
@@ -181,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
                 checkConnectionState();
             }
             if (isMobileConn || isWifiConn) {
-                ArrayList<Weather> days = NetworkUtils.getArrayOfWeather(currentWeather.getLat(), currentWeather.getLon());
+                ArrayList<Weather> days = NetworkUtils.getArrayOfWeather(currentWeather.getLat(), currentWeather.getLon(), lang, units);
                 setNextSevenDaysLayout(days);
             }
         }
@@ -200,19 +212,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        buttonFindNearly.setOnClickListener(new View.OnClickListener() {
+        buttonFindNearby.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                checkUnits();
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     checkConnectionState();
                 }
                 if (isMobileConn || isWifiConn) {
-                    currentWeather = NetworkUtils.getWeatherOfCurrentDay(MyLocationProvider.getLatitude(), MyLocationProvider.getLongitude());
+                    currentWeather = NetworkUtils.getWeatherOfCurrentDay(MyLocationProvider.getLatitude(), MyLocationProvider.getLongitude(), lang, units);
                     updateDayLayout(currentWeather);
-                    ArrayList<Weather> days = NetworkUtils.getArrayOfWeather(MyLocationProvider.getLatitude(), MyLocationProvider.getLongitude());
+                    ArrayList<Weather> days = NetworkUtils.getArrayOfWeather(MyLocationProvider.getLatitude(), MyLocationProvider.getLongitude(), lang, units);
                     setNextSevenDaysLayout(days);
                 } else {
-                    Toast.makeText(MainActivity.this, R.string.toas_no_connection, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, R.string.toast_no_connection, Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -221,6 +234,7 @@ public class MainActivity extends AppCompatActivity {
         buttonFindByCity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                checkUnits();
                 String nameOfCity = editTextNameOfCity.getText().toString();
                 if (!nameOfCity.isEmpty()) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -228,16 +242,16 @@ public class MainActivity extends AppCompatActivity {
                     }
                     if (isMobileConn || isWifiConn) {
                         try {
-                            currentWeather = NetworkUtils.getWeatherOfCurrentDay(nameOfCity);
+                            currentWeather = NetworkUtils.getWeatherOfCurrentDay(nameOfCity, lang, units);
                             updateDayLayout(currentWeather);
-                            ArrayList<Weather> days = NetworkUtils.getArrayOfWeather(currentWeather.getLat(), currentWeather.getLon());
+                            ArrayList<Weather> days = NetworkUtils.getArrayOfWeather(currentWeather.getLat(), currentWeather.getLon(), lang, units);
                             setNextSevenDaysLayout(days);
                         } catch (Exception e) {
                             Toast.makeText(MainActivity.this, R.string.toast_city_not_found, Toast.LENGTH_SHORT).show();
                             e.printStackTrace();
                         }
                     } else {
-                        Toast.makeText(MainActivity.this, R.string.toas_no_connection, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, R.string.toast_no_connection, Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Toast.makeText(getApplicationContext(), R.string.toast_input_city, Toast.LENGTH_SHORT).show();
@@ -248,22 +262,31 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateDayLayout(Weather w) {
         Picasso.get().load(w.getIconPath()).into(imageView);
-        textViewTemp.setText(String.format(Locale.getDefault(), "%.1f" + getString(R.string.value_of_temp_celsium), w.getTemp()));
+        if (units.equals(NetworkUtils.VALUE_UNITS_METRIC)) {
+            textViewFeelsLike.setText(String.format(Locale.getDefault(), "%.1f" + getString(R.string.value_of_temp_calcium), w.getTempFeelsLike()));
+            textViewTemp.setText(String.format(Locale.getDefault(), "%.1f" + getString(R.string.value_of_temp_calcium), w.getTemp()));
+        } else {
+            textViewFeelsLike.setText(String.format(Locale.getDefault(), "%.1f" + getString(R.string.temp_fahrenheit), w.getTempFeelsLike()));
+            textViewTemp.setText(String.format(Locale.getDefault(), "%.1f" + getString(R.string.temp_fahrenheit), w.getTemp()));
+        }
         textViewDescription.setText(String.format("%s", w.getDescription()));
         textViewNameOfCity.setText(String.format("%s", w.getNameOfCity()));
         textViewLatitude.setText(String.format(Locale.getDefault(), "%.4f", w.getLat()));
         textViewLongitude.setText(String.format(Locale.getDefault(), "%.4f", w.getLon()));
-        textViewFeelsLike.setText(String.format(Locale.getDefault(), "%.1f" + getString(R.string.value_of_temp_celsium), w.getTempFeelsLike()));
         textViewPressure.setText(String.format(Locale.getDefault(), "%.1f " + getString(R.string.value_of_pressure_mm), w.getPressure()));
         textViewHumidity.setText(String.format(Locale.getDefault(), "%.1f %%", w.getHumidity()));
-        textViewDirectionOfWind.setText(String.format("%s", w.getStringDirectionOfWind()));
+        String[] directions = getResources().getStringArray(R.array.directions_of_wind);
+        textViewDirectionOfWind.setText(String.format("%s", directions[w.getIndexOfDirectionsArray()]));
         textViewSpeedOfWind.setText(String.format(Locale.getDefault(), "%.1f " + getString(R.string.value_of_speed_of_wind_meters_in_sec), w.getSpeedOfWind()));
     }
 
-
     private ViewGroup.LayoutParams getLayoutParamsForTempColumn(View v, double temp) {
         ViewGroup.LayoutParams layoutParams = v.getLayoutParams();
-        layoutParams.height = (int) temp * 15;
+        if (units.equals(NetworkUtils.VALUE_UNITS_METRIC)) {
+            layoutParams.height = (int) temp * 15;
+        } else {
+            layoutParams.height = (int) (temp - 270) * 15;
+        }
         return layoutParams;
     }
 
@@ -326,6 +349,7 @@ public class MainActivity extends AppCompatActivity {
         outState.putDouble("directionOfWind", currentWeather.getDirectionOfWind());
         outState.putString("nameOfCity", currentWeather.getNameOfCity());
         outState.putString("icon", currentWeather.getIcon());
+        outState.putString("units", units);
     }
 
     @Override
@@ -357,6 +381,16 @@ public class MainActivity extends AppCompatActivity {
             if (networkInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
                 isMobileConn |= networkInfo.isConnected();
             }
+        }
+    }
+
+    public void checkUnits() {
+        switch (spinnerUnits.getSelectedItemPosition()) {
+            case 0:
+                units = NetworkUtils.VALUE_UNITS_METRIC;
+                break;
+            case 1:
+                units = NetworkUtils.VALUE_UNITS_STANDARD;
         }
     }
 }
