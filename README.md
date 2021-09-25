@@ -2,8 +2,6 @@
 
 MyWeather is an application for displaying the weather forecast using the API OpenWeatherMap.org
 
-Screenshot of application:
+Video presentation of working this app:
+https://www.youtube.com/watch?v=jKARHawuSvg
 
-![alt text](src/main/res/drawable/screen_1.png "Screenshot of application 1")
-![alt text](src/main/res/drawable/screen_2.png "Screenshot of application 2")
-![alt text](src/main/res/drawable/screen_3.png "Screenshot of application 3")
