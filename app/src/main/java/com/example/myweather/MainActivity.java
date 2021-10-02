@@ -13,6 +13,7 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -25,6 +26,10 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.myweather.data.ApiFactory;
+import com.example.myweather.data.ApiService;
+import com.example.myweather.data.pojo.day.Day;
+import com.example.myweather.data.pojo.day.Main;
 import com.example.myweather.utils.CalendarUtils;
 import com.example.myweather.utils.MyLocationProvider;
 import com.example.myweather.utils.NetworkUtils;
@@ -34,6 +39,11 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -96,6 +106,8 @@ public class MainActivity extends AppCompatActivity {
     public static String lang;
     public static String units;
 
+    private Disposable disposable;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -150,6 +162,26 @@ public class MainActivity extends AppCompatActivity {
         textViewDate5 = findViewById(R.id.textViewDay5);
         textViewDate6 = findViewById(R.id.textViewDay6);
         textViewDate7 = findViewById(R.id.textViewDay7);
+
+        ApiFactory apiFactory = ApiFactory.getInstance();
+        ApiService apiService = apiFactory.getApiService();
+        disposable = apiService.getMain("12ea3c6ee0274df42875083ffc07318d", "Moscow")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Day>() {
+                               @Override
+                               public void accept(Day day) throws Exception {
+                                   Toast.makeText(MainActivity.this, "" + day.getName(), Toast.LENGTH_SHORT).show();
+                               }
+                           }, new Consumer<Throwable>() {
+                               @Override
+                               public void accept(Throwable throwable) throws Exception {
+                                   Toast.makeText(MainActivity.this, "Ошибка: " + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                                   Log.i("qwerty", throwable.getLocalizedMessage());
+                               }
+                           }
+                );
+
 
         units = NetworkUtils.VALUE_UNITS_METRIC;
         ArrayAdapter<String> adapterForSpinnerUnits = new ArrayAdapter<>(this, R.layout.spinner_item, getResources().getStringArray(R.array.spinner_units));
@@ -259,6 +291,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        disposable.dispose();
+    }
+
+
 
     private void updateDayLayout(Weather w) {
         Picasso.get().load(w.getIconPath()).into(imageView);
