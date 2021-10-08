@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
     private TextView textViewHumidity;
     private TextView textViewDirectionOfWind;
     private TextView textViewSpeedOfWind;
-    private Spinner spinnerUnits;
 
     // layout of next 7 days
     private View viewColumnDay1;
@@ -97,9 +96,7 @@ public class MainActivity extends AppCompatActivity {
     private Weather currentWeather;
     private boolean isWifiConn;
     private boolean isMobileConn;
-    private Date date;
     public static String lang;
-    public static String units;
 
     private DayViewModel viewModelOfDay;
 
@@ -115,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
         buttonFindNearby = findViewById(R.id.buttonFindNearby);
         weekLayout = findViewById(R.id.weekLayout);
         switchWeather = findViewById(R.id.switchDayOrWeek);
-        spinnerUnits = findViewById(R.id.spinnerUnits);
 
         imageView = findViewById(R.id.imageView);
         textViewTemp = findViewById(R.id.textViewTempValue);
@@ -158,55 +154,50 @@ public class MainActivity extends AppCompatActivity {
         textViewDate6 = findViewById(R.id.textViewDay6);
         textViewDate7 = findViewById(R.id.textViewDay7);
 
-        units = NetworkUtils.VALUE_UNITS_METRIC;
-        ArrayAdapter<String> adapterForSpinnerUnits = new ArrayAdapter<>(this, R.layout.spinner_item, getResources().getStringArray(R.array.spinner_units));
-        spinnerUnits.setAdapter(adapterForSpinnerUnits);
-
         MyLocationProvider.findLocation(MainActivity.this);
 
-        preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         currentWeather = new Weather();
 
-        if (preferences.contains("description")) {
-            currentWeather.setLat((double) preferences.getFloat("lat", 0));
-            currentWeather.setLon((double) preferences.getFloat("lon", 0));
-            currentWeather.setDescription(preferences.getString("description", " "));
-            currentWeather.setTemp((double) preferences.getFloat("temp", 0));
-            currentWeather.setTempFeelsLike((double) preferences.getFloat("tempFeelsLike", 0));
-            currentWeather.setPressure((double) preferences.getFloat("pressure", 0));
-            currentWeather.setHumidity((double) preferences.getFloat("humidity", 0));
-            currentWeather.setSpeedOfWind((double) preferences.getFloat("speedOfWind", 0));
-            currentWeather.setDirectionOfWind((double) preferences.getFloat("directionOfWind", 0));
-            currentWeather.setNameOfCity(preferences.getString("nameOfCity", " "));
-            currentWeather.setIcon(preferences.getString("icon", " "));
-            updateDayLayout(currentWeather);
-        }
+//        preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+//        if (preferences.contains("description")) {
+//            currentWeather.setLat((double) preferences.getFloat("lat", 0));
+//            currentWeather.setLon((double) preferences.getFloat("lon", 0));
+//            currentWeather.setDescription(preferences.getString("description", " "));
+//            currentWeather.setTemp((double) preferences.getFloat("temp", 0));
+//            currentWeather.setTempFeelsLike((double) preferences.getFloat("tempFeelsLike", 0));
+//            currentWeather.setPressure((double) preferences.getFloat("pressure", 0));
+//            currentWeather.setHumidity((double) preferences.getFloat("humidity", 0));
+//            currentWeather.setSpeedOfWind((double) preferences.getFloat("speedOfWind", 0));
+//            currentWeather.setDirectionOfWind((double) preferences.getFloat("directionOfWind", 0));
+//            currentWeather.setNameOfCity(preferences.getString("nameOfCity", " "));
+//            currentWeather.setIcon(preferences.getString("icon", " "));
+//            updateDayLayout(currentWeather);
+//        }
+//
+//        if (savedInstanceState != null) {
+//            units = savedInstanceState.getString("units");
+//            currentWeather.setLat(savedInstanceState.getDouble("lat"));
+//            currentWeather.setLon(savedInstanceState.getDouble("lon"));
+//            currentWeather.setDescription(savedInstanceState.getString("description"));
+//            currentWeather.setTemp(savedInstanceState.getDouble("temp"));
+//            currentWeather.setTempFeelsLike(savedInstanceState.getDouble("tempFeelsLike"));
+//            currentWeather.setPressure(savedInstanceState.getDouble("pressure"));
+//            currentWeather.setHumidity(savedInstanceState.getDouble("humidity"));
+//            currentWeather.setSpeedOfWind(savedInstanceState.getDouble("speedOfWind"));
+//            currentWeather.setDirectionOfWind(savedInstanceState.getDouble("directionOfWind"));
+//            currentWeather.setNameOfCity(savedInstanceState.getString("nameOfCity"));
+//            currentWeather.setIcon(savedInstanceState.getString("icon"));
+//            updateDayLayout(currentWeather);
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                checkConnectionState();
+//            }
+//            if (isMobileConn || isWifiConn) {
+//                ArrayList<Weather> days = NetworkUtils.getArrayOfWeather(currentWeather.getLat(), currentWeather.getLon(), lang, units);
+//                setNextSevenDaysLayout(days);
+//            }
+//        }
 
-        if (savedInstanceState != null) {
-            units = savedInstanceState.getString("units");
-            currentWeather.setLat(savedInstanceState.getDouble("lat"));
-            currentWeather.setLon(savedInstanceState.getDouble("lon"));
-            currentWeather.setDescription(savedInstanceState.getString("description"));
-            currentWeather.setTemp(savedInstanceState.getDouble("temp"));
-            currentWeather.setTempFeelsLike(savedInstanceState.getDouble("tempFeelsLike"));
-            currentWeather.setPressure(savedInstanceState.getDouble("pressure"));
-            currentWeather.setHumidity(savedInstanceState.getDouble("humidity"));
-            currentWeather.setSpeedOfWind(savedInstanceState.getDouble("speedOfWind"));
-            currentWeather.setDirectionOfWind(savedInstanceState.getDouble("directionOfWind"));
-            currentWeather.setNameOfCity(savedInstanceState.getString("nameOfCity"));
-            currentWeather.setIcon(savedInstanceState.getString("icon"));
-            updateDayLayout(currentWeather);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                checkConnectionState();
-            }
-            if (isMobileConn || isWifiConn) {
-                ArrayList<Weather> days = NetworkUtils.getArrayOfWeather(currentWeather.getLat(), currentWeather.getLon(), lang, units);
-                setNextSevenDaysLayout(days);
-            }
-        }
-
-        date = new Date();
-        setDates();
+        setDates(new Date());
 
         // LiveData
         viewModelOfDay = ViewModelProviders.of(this).get(DayViewModel.class);
@@ -231,7 +222,6 @@ public class MainActivity extends AppCompatActivity {
         buttonFindNearby.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                checkUnits();
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     checkConnectionState();
                 }
@@ -254,7 +244,6 @@ public class MainActivity extends AppCompatActivity {
         buttonFindByCity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                checkUnits();
                 String nameOfCity = editTextNameOfCity.getText().toString();
                 if (!nameOfCity.isEmpty()) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -262,7 +251,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     if (isMobileConn || isWifiConn) {
                         try {
-                              viewModelOfDay.loadData(nameOfCity);
+                            viewModelOfDay.loadData(nameOfCity);
 //                            currentWeather = NetworkUtils.getWeatherOfCurrentDay(nameOfCity, lang, units);
 //                            updateDayLayout(currentWeather);
 //                            ArrayList<Weather> days = NetworkUtils.getArrayOfWeather(currentWeather.getLat(), currentWeather.getLon(), lang, units);
@@ -285,13 +274,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateDayLayout(Weather w) {
         Picasso.get().load(w.getIconPath()).into(imageView);
-        if (units.equals(NetworkUtils.VALUE_UNITS_METRIC)) {
-            textViewFeelsLike.setText(String.format(Locale.getDefault(), "%.1f" + getString(R.string.value_of_temp_calcium), w.getTempFeelsLike()));
-            textViewTemp.setText(String.format(Locale.getDefault(), "%.1f" + getString(R.string.value_of_temp_calcium), w.getTemp()));
-        } else {
-            textViewFeelsLike.setText(String.format(Locale.getDefault(), "%.1f" + getString(R.string.temp_fahrenheit), w.getTempFeelsLike()));
-            textViewTemp.setText(String.format(Locale.getDefault(), "%.1f" + getString(R.string.temp_fahrenheit), w.getTemp()));
-        }
+        textViewFeelsLike.setText(String.format(Locale.getDefault(), "%.1f" + getString(R.string.value_of_temp_calcium), w.getTempFeelsLike()));
+        textViewTemp.setText(String.format(Locale.getDefault(), "%.1f" + getString(R.string.value_of_temp_calcium), w.getTemp()));
         textViewDescription.setText(String.format("%s", w.getDescription()));
         textViewNameOfCity.setText(String.format("%s", w.getNameOfCity()));
         textViewLatitude.setText(String.format(Locale.getDefault(), "%.4f", w.getLat()));
@@ -305,11 +289,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ViewGroup.LayoutParams getLayoutParamsForTempColumn(View v, double temp) {
         ViewGroup.LayoutParams layoutParams = v.getLayoutParams();
-        if (units.equals(NetworkUtils.VALUE_UNITS_METRIC)) {
-            layoutParams.height = (int) temp * 15;
-        } else {
-            layoutParams.height = (int) (temp - 270) * 15;
-        }
+        layoutParams.height = (int) temp * 15;
         return layoutParams;
     }
 
@@ -348,7 +328,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void setDates() {
+    private void setDates(Date date) {
         textViewDate1.setText(CalendarUtils.addDays(date, 1));
         textViewDate2.setText(CalendarUtils.addDays(date, 2));
         textViewDate3.setText(CalendarUtils.addDays(date, 3));
@@ -358,38 +338,38 @@ public class MainActivity extends AppCompatActivity {
         textViewDate7.setText(CalendarUtils.addDays(date, 7));
     }
 
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putDouble("lat", currentWeather.getLat());
-        outState.putDouble("lon", currentWeather.getLon());
-        outState.putString("description", currentWeather.getDescription());
-        outState.putDouble("temp", currentWeather.getTemp());
-        outState.putDouble("tempFeelsLike", currentWeather.getTempFeelsLike());
-        outState.putDouble("pressure", currentWeather.getPressure());
-        outState.putDouble("humidity", currentWeather.getHumidity());
-        outState.putDouble("speedOfWind", currentWeather.getSpeedOfWind());
-        outState.putDouble("directionOfWind", currentWeather.getDirectionOfWind());
-        outState.putString("nameOfCity", currentWeather.getNameOfCity());
-        outState.putString("icon", currentWeather.getIcon());
-        outState.putString("units", units);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        preferences.edit().putFloat("lat", (float) currentWeather.getLat()).apply();
-        preferences.edit().putFloat("lon", (float) currentWeather.getLon()).apply();
-        preferences.edit().putString("description", currentWeather.getDescription()).apply();
-        preferences.edit().putFloat("temp", (float) currentWeather.getTemp()).apply();
-        preferences.edit().putFloat("tempFeelsLike", (float) currentWeather.getTempFeelsLike()).apply();
-        preferences.edit().putFloat("pressure", (float) currentWeather.getPressure()).apply();
-        preferences.edit().putFloat("humidity", (float) currentWeather.getHumidity()).apply();
-        preferences.edit().putFloat("speedOfWind", (float) currentWeather.getSpeedOfWind()).apply();
-        preferences.edit().putFloat("directionOfWind", (float) currentWeather.getDirectionOfWind()).apply();
-        preferences.edit().putString("nameOfCity", currentWeather.getNameOfCity()).apply();
-        preferences.edit().putString("icon", currentWeather.getIcon()).apply();
-    }
+//    @Override
+//    protected void onSaveInstanceState(@NonNull Bundle outState) {
+//        super.onSaveInstanceState(outState);
+//        outState.putDouble("lat", currentWeather.getLat());
+//        outState.putDouble("lon", currentWeather.getLon());
+//        outState.putString("description", currentWeather.getDescription());
+//        outState.putDouble("temp", currentWeather.getTemp());
+//        outState.putDouble("tempFeelsLike", currentWeather.getTempFeelsLike());
+//        outState.putDouble("pressure", currentWeather.getPressure());
+//        outState.putDouble("humidity", currentWeather.getHumidity());
+//        outState.putDouble("speedOfWind", currentWeather.getSpeedOfWind());
+//        outState.putDouble("directionOfWind", currentWeather.getDirectionOfWind());
+//        outState.putString("nameOfCity", currentWeather.getNameOfCity());
+//        outState.putString("icon", currentWeather.getIcon());
+//        outState.putString("units", units);
+//    }
+//
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        preferences.edit().putFloat("lat", (float) currentWeather.getLat()).apply();
+//        preferences.edit().putFloat("lon", (float) currentWeather.getLon()).apply();
+//        preferences.edit().putString("description", currentWeather.getDescription()).apply();
+//        preferences.edit().putFloat("temp", (float) currentWeather.getTemp()).apply();
+//        preferences.edit().putFloat("tempFeelsLike", (float) currentWeather.getTempFeelsLike()).apply();
+//        preferences.edit().putFloat("pressure", (float) currentWeather.getPressure()).apply();
+//        preferences.edit().putFloat("humidity", (float) currentWeather.getHumidity()).apply();
+//        preferences.edit().putFloat("speedOfWind", (float) currentWeather.getSpeedOfWind()).apply();
+//        preferences.edit().putFloat("directionOfWind", (float) currentWeather.getDirectionOfWind()).apply();
+//        preferences.edit().putString("nameOfCity", currentWeather.getNameOfCity()).apply();
+//        preferences.edit().putString("icon", currentWeather.getIcon()).apply();
+//    }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void checkConnectionState() {
@@ -404,16 +384,6 @@ public class MainActivity extends AppCompatActivity {
             if (networkInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
                 isMobileConn |= networkInfo.isConnected();
             }
-        }
-    }
-
-    public void checkUnits() {
-        switch (spinnerUnits.getSelectedItemPosition()) {
-            case 0:
-                units = NetworkUtils.VALUE_UNITS_METRIC;
-                break;
-            case 1:
-                units = NetworkUtils.VALUE_UNITS_STANDARD;
         }
     }
 }
