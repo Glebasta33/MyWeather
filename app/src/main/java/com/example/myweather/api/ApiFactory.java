@@ -1,4 +1,4 @@
-package com.example.myweather.data;
+package com.example.myweather.api;
 
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 

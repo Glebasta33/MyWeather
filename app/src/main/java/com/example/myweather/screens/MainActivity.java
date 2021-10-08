@@ -1,9 +1,11 @@
-package com.example.myweather;
+package com.example.myweather.screens;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -26,10 +28,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.myweather.data.ApiFactory;
-import com.example.myweather.data.ApiService;
+import com.example.myweather.R;
 import com.example.myweather.data.pojo.day.Day;
-import com.example.myweather.data.pojo.day.Main;
 import com.example.myweather.utils.CalendarUtils;
 import com.example.myweather.utils.MyLocationProvider;
 import com.example.myweather.utils.NetworkUtils;
@@ -39,11 +39,6 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
-
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -106,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
     public static String lang;
     public static String units;
 
-    private Disposable disposable;
+    private DayViewModel viewModelOfDay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,26 +158,6 @@ public class MainActivity extends AppCompatActivity {
         textViewDate6 = findViewById(R.id.textViewDay6);
         textViewDate7 = findViewById(R.id.textViewDay7);
 
-        ApiFactory apiFactory = ApiFactory.getInstance();
-        ApiService apiService = apiFactory.getApiService();
-        disposable = apiService.getMain("12ea3c6ee0274df42875083ffc07318d", "Moscow")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Day>() {
-                               @Override
-                               public void accept(Day day) throws Exception {
-                                   Toast.makeText(MainActivity.this, "" + day.getName(), Toast.LENGTH_SHORT).show();
-                               }
-                           }, new Consumer<Throwable>() {
-                               @Override
-                               public void accept(Throwable throwable) throws Exception {
-                                   Toast.makeText(MainActivity.this, "Ошибка: " + throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                                   Log.i("qwerty", throwable.getLocalizedMessage());
-                               }
-                           }
-                );
-
-
         units = NetworkUtils.VALUE_UNITS_METRIC;
         ArrayAdapter<String> adapterForSpinnerUnits = new ArrayAdapter<>(this, R.layout.spinner_item, getResources().getStringArray(R.array.spinner_units));
         spinnerUnits.setAdapter(adapterForSpinnerUnits);
@@ -233,6 +208,15 @@ public class MainActivity extends AppCompatActivity {
         date = new Date();
         setDates();
 
+        // LiveData
+        viewModelOfDay = ViewModelProviders.of(this).get(DayViewModel.class);
+        viewModelOfDay.getLiveDataDay().observe(this, new Observer<Day>() {
+            @Override
+            public void onChanged(Day day) {
+                Toast.makeText(MainActivity.this, "Город: " + day.getName() + "\nТемпература: " + day.getMain().getTemp(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
         switchWeather.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -252,10 +236,14 @@ public class MainActivity extends AppCompatActivity {
                     checkConnectionState();
                 }
                 if (isMobileConn || isWifiConn) {
-                    currentWeather = NetworkUtils.getWeatherOfCurrentDay(MyLocationProvider.getLatitude(), MyLocationProvider.getLongitude(), lang, units);
-                    updateDayLayout(currentWeather);
-                    ArrayList<Weather> days = NetworkUtils.getArrayOfWeather(MyLocationProvider.getLatitude(), MyLocationProvider.getLongitude(), lang, units);
-                    setNextSevenDaysLayout(days);
+                    viewModelOfDay.loadData(MyLocationProvider.getLatitude(), MyLocationProvider.getLongitude());
+                    //Todo: [] Посмотреть код, связанный с получением координат
+                    Log.i("coords", "coords: " + MyLocationProvider.getLatitude() + MyLocationProvider.getLongitude());
+                    Toast.makeText(MainActivity.this, "coords: " + MyLocationProvider.getLatitude() + MyLocationProvider.getLongitude(), Toast.LENGTH_SHORT).show();
+//                    currentWeather = NetworkUtils.getWeatherOfCurrentDay(MyLocationProvider.getLatitude(), MyLocationProvider.getLongitude(), lang, units);
+//                    updateDayLayout(currentWeather);
+//                    ArrayList<Weather> days = NetworkUtils.getArrayOfWeather(MyLocationProvider.getLatitude(), MyLocationProvider.getLongitude(), lang, units);
+//                    setNextSevenDaysLayout(days);
                 } else {
                     Toast.makeText(MainActivity.this, R.string.toast_no_connection, Toast.LENGTH_SHORT).show();
                 }
@@ -274,10 +262,11 @@ public class MainActivity extends AppCompatActivity {
                     }
                     if (isMobileConn || isWifiConn) {
                         try {
-                            currentWeather = NetworkUtils.getWeatherOfCurrentDay(nameOfCity, lang, units);
-                            updateDayLayout(currentWeather);
-                            ArrayList<Weather> days = NetworkUtils.getArrayOfWeather(currentWeather.getLat(), currentWeather.getLon(), lang, units);
-                            setNextSevenDaysLayout(days);
+                              viewModelOfDay.loadData(nameOfCity);
+//                            currentWeather = NetworkUtils.getWeatherOfCurrentDay(nameOfCity, lang, units);
+//                            updateDayLayout(currentWeather);
+//                            ArrayList<Weather> days = NetworkUtils.getArrayOfWeather(currentWeather.getLat(), currentWeather.getLon(), lang, units);
+//                            setNextSevenDaysLayout(days);
                         } catch (Exception e) {
                             Toast.makeText(MainActivity.this, R.string.toast_city_not_found, Toast.LENGTH_SHORT).show();
                             e.printStackTrace();
@@ -292,13 +281,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        disposable.dispose();
-    }
-
-
+    //Todo: [] Закомментировать и свернуть методы, которые пока не нужны и будут мешаться \/
 
     private void updateDayLayout(Weather w) {
         Picasso.get().load(w.getIconPath()).into(imageView);

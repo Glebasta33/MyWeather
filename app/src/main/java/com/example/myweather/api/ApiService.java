@@ -1,4 +1,4 @@
-package com.example.myweather.data;
+package com.example.myweather.api;
 
 import com.example.myweather.data.pojo.day.Day;
 
@@ -9,4 +9,7 @@ import retrofit2.http.Query;
 public interface ApiService {
     @GET("weather")
     Observable<Day> getMain(@Query("appid") String ApiId, @Query("q") String nameOfCity);
+
+    @GET("weather")
+    Observable<Day> getMain(@Query("appid") String ApiId, @Query("lat") double lat, @Query("lon") double lon);
 }

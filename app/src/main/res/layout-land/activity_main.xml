@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     app:layout_constraintBottom_toTopOf="@+id/constraintLayoutMain"
     app:layout_constraintHorizontal_bias="0.5"
-    tools:context=".MainActivity">
+    tools:context=".screens.MainActivity">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
