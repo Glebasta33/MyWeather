@@ -90,7 +90,7 @@ public class Weather {
         return directionOfWind;
     }
 
-    public int getIndexOfDirectionsArray() {  //
+    public int getIndexOfDirectionsArray() {
         return (int) (Math.round(directionOfWind / 45) % 8);
     }
 

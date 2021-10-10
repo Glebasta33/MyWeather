@@ -93,7 +93,6 @@ public class MainActivity extends AppCompatActivity {
     private TextView textViewDate7;
 
     private SharedPreferences preferences;
-    private Weather currentWeather;
     private boolean isWifiConn;
     private boolean isMobileConn;
     public static String lang;
@@ -156,8 +155,6 @@ public class MainActivity extends AppCompatActivity {
 
         MyLocationProvider.findLocation(MainActivity.this);
 
-        currentWeather = new Weather();
-
 //        preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 //        if (preferences.contains("description")) {
 //            currentWeather.setLat((double) preferences.getFloat("lat", 0));
@@ -204,7 +201,8 @@ public class MainActivity extends AppCompatActivity {
         viewModelOfDay.getLiveDataDay().observe(this, new Observer<Day>() {
             @Override
             public void onChanged(Day day) {
-                Toast.makeText(MainActivity.this, "Город: " + day.getName() + "\nТемпература: " + day.getMain().getTemp(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Город: " + day.getName() + "\nТемпература: " + day.getMain().getTemp() + "\nДавление: " +  day.getMain().getPressure(), Toast.LENGTH_SHORT).show();
+                updateDayLayout(day);
             }
         });
 
@@ -270,21 +268,19 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    //Todo: [] Закомментировать и свернуть методы, которые пока не нужны и будут мешаться \/
-
-    private void updateDayLayout(Weather w) {
-        Picasso.get().load(w.getIconPath()).into(imageView);
-        textViewFeelsLike.setText(String.format(Locale.getDefault(), "%.1f" + getString(R.string.value_of_temp_calcium), w.getTempFeelsLike()));
-        textViewTemp.setText(String.format(Locale.getDefault(), "%.1f" + getString(R.string.value_of_temp_calcium), w.getTemp()));
-        textViewDescription.setText(String.format("%s", w.getDescription()));
-        textViewNameOfCity.setText(String.format("%s", w.getNameOfCity()));
-        textViewLatitude.setText(String.format(Locale.getDefault(), "%.4f", w.getLat()));
-        textViewLongitude.setText(String.format(Locale.getDefault(), "%.4f", w.getLon()));
-        textViewPressure.setText(String.format(Locale.getDefault(), "%.1f " + getString(R.string.value_of_pressure_mm), w.getPressure()));
-        textViewHumidity.setText(String.format(Locale.getDefault(), "%.1f %%", w.getHumidity()));
+    private void updateDayLayout(Day day) {
+        Picasso.get().load(NetworkUtils.BASE_URL_IMAGE + day.getWeather().get(0).getIcon() + NetworkUtils.URL_PNG).into(imageView);
+        textViewFeelsLike.setText(String.format(Locale.getDefault(), "%.1f" + getString(R.string.value_of_temp_calcium), day.getMain().getFeelsLike()));
+        textViewTemp.setText(String.format(Locale.getDefault(), "%.1f" + getString(R.string.value_of_temp_calcium), day.getMain().getTemp()));
+        textViewDescription.setText(String.format("%s", day.getWeather().get(0).getDescription()));
+        textViewNameOfCity.setText(String.format("%s", day.getName()));
+        textViewLatitude.setText(String.format(Locale.getDefault(), "%.4f", day.getCoord().getLat()));
+        textViewLongitude.setText(String.format(Locale.getDefault(), "%.4f", day.getCoord().getLon()));
+        textViewPressure.setText(String.format(Locale.getDefault(), "%s " + getString(R.string.value_of_pressure_mm), day.getMain().getPressure()));
+        textViewHumidity.setText(String.format(Locale.getDefault(), "%s %%", day.getMain().getHumidity()));
         String[] directions = getResources().getStringArray(R.array.directions_of_wind);
-        textViewDirectionOfWind.setText(String.format("%s", directions[w.getIndexOfDirectionsArray()]));
-        textViewSpeedOfWind.setText(String.format(Locale.getDefault(), "%.1f " + getString(R.string.value_of_speed_of_wind_meters_in_sec), w.getSpeedOfWind()));
+        textViewDirectionOfWind.setText(String.format("%s", directions[(int) (Math.round(day.getWind().getDeg() / 45) % 8)]));
+        textViewSpeedOfWind.setText(String.format(Locale.getDefault(), "%.1f " + getString(R.string.value_of_speed_of_wind_meters_in_sec), day.getWind().getSpeed()));
     }
 
     private ViewGroup.LayoutParams getLayoutParamsForTempColumn(View v, double temp) {
