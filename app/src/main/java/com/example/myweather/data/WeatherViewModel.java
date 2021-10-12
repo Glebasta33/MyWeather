@@ -1,4 +1,4 @@
-package com.example.myweather.screens;
+package com.example.myweather.data;
 
 import android.app.Application;
 
@@ -20,8 +20,6 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class WeatherViewModel extends AndroidViewModel {
-
-    //Todo: [] Посмотреть на гитхабе в каком пакете хранится ViewModel в проекте MVVM
 
     private Disposable disposableDay;
     private Disposable disposableSevenDays;

@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.myweather.R;
+import com.example.myweather.data.WeatherViewModel;
 import com.example.myweather.data.pojo.day.Day;
 import com.example.myweather.data.pojo.seven_days.SevenDays;
 import com.example.myweather.utils.CalendarUtils;
