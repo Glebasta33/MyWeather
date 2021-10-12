@@ -39,6 +39,11 @@ public class NetworkUtils {
     public static final String VALUE_UNITS_STANDARD = "standard";
     public static final String VALUE_MINUTELY = "minutely";
     public static final String VALUE_HOURLY = "hourly";
+    public static final String EXCLUDED_DATA = "current,hourly,minutely";
+
+    public static String buildIconPath(String icon) {
+        return NetworkUtils.BASE_URL_IMAGE + icon + NetworkUtils.URL_PNG;
+    }
 
     private static URL buildWeatherURL(String city, String lang, String units) {
         URL url = null;

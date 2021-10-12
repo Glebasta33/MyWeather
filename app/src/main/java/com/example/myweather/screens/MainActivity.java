@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
         viewModelOfWeather.getLiveDataOfSevenDays().observe(this, new Observer<SevenDays>() {
             @Override
             public void onChanged(SevenDays sevenDays) {
-                Toast.makeText(MainActivity.this, "Seven days. \nTimezone: " + sevenDays.getTimezone() + "\nDay 3 temp: " + sevenDays.getDaily().get(3).getTemp().getDay(), Toast.LENGTH_SHORT).show();
+                updateSevenDaysLayout(sevenDays);
             }
         });
 
@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateDayLayout(Day day) {
-        Picasso.get().load(NetworkUtils.BASE_URL_IMAGE + day.getWeather().get(0).getIcon() + NetworkUtils.URL_PNG).into(imageView);
+        Picasso.get().load(NetworkUtils.buildIconPath(day.getWeather().get(0).getIcon())).into(imageView);
         textViewFeelsLike.setText(String.format(Locale.getDefault(), "%.1f" + getString(R.string.value_of_temp_calcium), day.getMain().getFeelsLike()));
         textViewTemp.setText(String.format(Locale.getDefault(), "%.1f" + getString(R.string.value_of_temp_calcium), day.getMain().getTemp()));
         textViewDescription.setText(String.format("%s", day.getWeather().get(0).getDescription()));
@@ -237,38 +237,31 @@ public class MainActivity extends AppCompatActivity {
         return layoutParams;
     }
 
-    private void setNextSevenDaysLayout(ArrayList<Weather> days) {
-        Weather day1 = days.get(0);
-        Weather day2 = days.get(1);
-        Weather day3 = days.get(2);
-        Weather day4 = days.get(3);
-        Weather day5 = days.get(4);
-        Weather day6 = days.get(5);
-        Weather day7 = days.get(6);
+    private void updateSevenDaysLayout(SevenDays d) {
 
-        viewColumnDay1.setLayoutParams(getLayoutParamsForTempColumn(viewColumnDay1, day1.getTemp()));
-        viewColumnDay2.setLayoutParams(getLayoutParamsForTempColumn(viewColumnDay2, day2.getTemp()));
-        viewColumnDay3.setLayoutParams(getLayoutParamsForTempColumn(viewColumnDay3, day3.getTemp()));
-        viewColumnDay4.setLayoutParams(getLayoutParamsForTempColumn(viewColumnDay4, day4.getTemp()));
-        viewColumnDay5.setLayoutParams(getLayoutParamsForTempColumn(viewColumnDay5, day5.getTemp()));
-        viewColumnDay6.setLayoutParams(getLayoutParamsForTempColumn(viewColumnDay6, day6.getTemp()));
-        viewColumnDay7.setLayoutParams(getLayoutParamsForTempColumn(viewColumnDay7, day7.getTemp()));
+        viewColumnDay1.setLayoutParams(getLayoutParamsForTempColumn(viewColumnDay1, d.getDaily().get(0).getTemp().getDay()));
+        viewColumnDay2.setLayoutParams(getLayoutParamsForTempColumn(viewColumnDay2, d.getDaily().get(1).getTemp().getDay()));
+        viewColumnDay3.setLayoutParams(getLayoutParamsForTempColumn(viewColumnDay3, d.getDaily().get(2).getTemp().getDay()));
+        viewColumnDay4.setLayoutParams(getLayoutParamsForTempColumn(viewColumnDay4, d.getDaily().get(3).getTemp().getDay()));
+        viewColumnDay5.setLayoutParams(getLayoutParamsForTempColumn(viewColumnDay5, d.getDaily().get(4).getTemp().getDay()));
+        viewColumnDay6.setLayoutParams(getLayoutParamsForTempColumn(viewColumnDay6, d.getDaily().get(5).getTemp().getDay()));
+        viewColumnDay7.setLayoutParams(getLayoutParamsForTempColumn(viewColumnDay7, d.getDaily().get(6).getTemp().getDay()));
 
-        textViewTempDay1.setText(String.format(Locale.getDefault(), "%.0f°", day1.getTemp()));
-        textViewTempDay2.setText(String.format(Locale.getDefault(), "%.0f°", day2.getTemp()));
-        textViewTempDay3.setText(String.format(Locale.getDefault(), "%.0f°", day3.getTemp()));
-        textViewTempDay4.setText(String.format(Locale.getDefault(), "%.0f°", day4.getTemp()));
-        textViewTempDay5.setText(String.format(Locale.getDefault(), "%.0f°", day5.getTemp()));
-        textViewTempDay6.setText(String.format(Locale.getDefault(), "%.0f°", day6.getTemp()));
-        textViewTempDay7.setText(String.format(Locale.getDefault(), "%.0f°", day7.getTemp()));
+        textViewTempDay1.setText(String.format(Locale.getDefault(), "%.0f°", d.getDaily().get(0).getTemp().getDay()));
+        textViewTempDay2.setText(String.format(Locale.getDefault(), "%.0f°", d.getDaily().get(1).getTemp().getDay()));
+        textViewTempDay3.setText(String.format(Locale.getDefault(), "%.0f°", d.getDaily().get(2).getTemp().getDay()));
+        textViewTempDay4.setText(String.format(Locale.getDefault(), "%.0f°", d.getDaily().get(3).getTemp().getDay()));
+        textViewTempDay5.setText(String.format(Locale.getDefault(), "%.0f°", d.getDaily().get(4).getTemp().getDay()));
+        textViewTempDay6.setText(String.format(Locale.getDefault(), "%.0f°", d.getDaily().get(5).getTemp().getDay()));
+        textViewTempDay7.setText(String.format(Locale.getDefault(), "%.0f°", d.getDaily().get(6).getTemp().getDay()));
 
-        Picasso.get().load(day1.getIconPath()).into(imageViewDay1);
-        Picasso.get().load(day2.getIconPath()).into(imageViewDay2);
-        Picasso.get().load(day3.getIconPath()).into(imageViewDay3);
-        Picasso.get().load(day4.getIconPath()).into(imageViewDay4);
-        Picasso.get().load(day5.getIconPath()).into(imageViewDay5);
-        Picasso.get().load(day6.getIconPath()).into(imageViewDay6);
-        Picasso.get().load(day7.getIconPath()).into(imageViewDay7);
+        Picasso.get().load(NetworkUtils.buildIconPath(d.getDaily().get(0).getWeather().get(0).getIcon())).into(imageViewDay1);
+        Picasso.get().load(NetworkUtils.buildIconPath(d.getDaily().get(1).getWeather().get(0).getIcon())).into(imageViewDay2);
+        Picasso.get().load(NetworkUtils.buildIconPath(d.getDaily().get(2).getWeather().get(0).getIcon())).into(imageViewDay3);
+        Picasso.get().load(NetworkUtils.buildIconPath(d.getDaily().get(3).getWeather().get(0).getIcon())).into(imageViewDay4);
+        Picasso.get().load(NetworkUtils.buildIconPath(d.getDaily().get(4).getWeather().get(0).getIcon())).into(imageViewDay5);
+        Picasso.get().load(NetworkUtils.buildIconPath(d.getDaily().get(5).getWeather().get(0).getIcon())).into(imageViewDay6);
+        Picasso.get().load(NetworkUtils.buildIconPath(d.getDaily().get(6).getWeather().get(0).getIcon())).into(imageViewDay7);
 
     }
 
