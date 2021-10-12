@@ -7,14 +7,16 @@ import io.reactivex.Observable;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 
+import static com.example.myweather.utils.NetworkUtils.*;
+
 public interface ApiService {
-    @GET("weather")
-    Observable<Day> getDayResponse(@Query("appid") String ApiId, @Query("q") String nameOfCity, @Query("units") String units);
+    @GET(ENDPOINT_WEATHER)
+    Observable<Day> getDayResponse(@Query(PARAMS_API_KEY) String ApiId, @Query(PARAMS_CITY) String nameOfCity, @Query(PARAMS_UNITS) String units);
 
-    @GET("weather")
-    Observable<Day> getDayResponse(@Query("appid") String ApiId, @Query("lat") double lat, @Query("lon") double lon, @Query("units") String units);
+    @GET(ENDPOINT_WEATHER)
+    Observable<Day> getDayResponse(@Query(PARAMS_API_KEY) String ApiId, @Query(PARAMS_LAT) double lat, @Query(PARAMS_LON) double lon, @Query(PARAMS_UNITS) String units);
 
-    @GET("onecall")
-    Observable<SevenDays> getSevenDaysResponse(@Query("appid") String ApiId, @Query("lat") double lat, @Query("lon") double lon, @Query("exclude") String exclude, @Query("units") String units);
+    @GET(ENDPOINT_ONE_CALL)
+    Observable<SevenDays> getSevenDaysResponse(@Query(PARAMS_API_KEY) String ApiId, @Query(PARAMS_LAT) double lat, @Query(PARAMS_LON) double lon, @Query(PARAMS_EXCLUDE) String exclude, @Query(PARAMS_UNITS) String units);
 
 }

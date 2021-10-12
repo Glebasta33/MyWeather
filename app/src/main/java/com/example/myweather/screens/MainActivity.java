@@ -28,10 +28,8 @@ import com.example.myweather.data.pojo.seven_days.SevenDays;
 import com.example.myweather.utils.CalendarUtils;
 import com.example.myweather.utils.MyLocationProvider;
 import com.example.myweather.utils.NetworkUtils;
-import com.example.myweather.utils.Weather;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 

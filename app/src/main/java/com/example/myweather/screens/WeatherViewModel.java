@@ -1,7 +1,6 @@
 package com.example.myweather.screens;
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -13,7 +12,7 @@ import com.example.myweather.api.ApiService;
 import com.example.myweather.data.pojo.day.Day;
 import com.example.myweather.data.pojo.seven_days.SevenDays;
 import com.example.myweather.utils.ApiKeyStorage;
-import com.example.myweather.utils.NetworkUtils;
+import static com.example.myweather.utils.NetworkUtils.*;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -22,13 +21,14 @@ import io.reactivex.schedulers.Schedulers;
 
 public class WeatherViewModel extends AndroidViewModel {
 
+    //Todo: [] Посмотреть на гитхабе в каком пакете хранится ViewModel в проекте MVVM
+
     private Disposable disposableDay;
     private Disposable disposableSevenDays;
     private MutableLiveData<Day> liveDataDay;
     private MutableLiveData<SevenDays> liveDataSevenDays;
     private ApiFactory apiFactory;
     private ApiService apiService;
-    private Day d;
 
     public WeatherViewModel(@NonNull Application application) {
         super(application);
@@ -47,14 +47,13 @@ public class WeatherViewModel extends AndroidViewModel {
     }
 
     public void loadDataOfDay(String nameOfCity) {
-        disposableDay = apiService.getDayResponse(ApiKeyStorage.API_KEY, nameOfCity, NetworkUtils.VALUE_UNITS_METRIC)
+        disposableDay = apiService.getDayResponse(ApiKeyStorage.API_KEY, nameOfCity, VALUE_UNITS_METRIC)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<Day>() {
                                @Override
                                public void accept(Day day) throws Exception {
                                    liveDataDay.setValue(day);
-                                   d = day;
                                }
                            }, new Consumer<Throwable>() {
                                @Override
@@ -66,7 +65,7 @@ public class WeatherViewModel extends AndroidViewModel {
     }
 
     public void loadDataOfDay(double lat, double lon) {
-        disposableDay = apiService.getDayResponse(ApiKeyStorage.API_KEY, lat, lon, NetworkUtils.VALUE_UNITS_METRIC)
+        disposableDay = apiService.getDayResponse(ApiKeyStorage.API_KEY, lat, lon, VALUE_UNITS_METRIC)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<Day>() {
@@ -77,14 +76,14 @@ public class WeatherViewModel extends AndroidViewModel {
                            }, new Consumer<Throwable>() {
                                @Override
                                public void accept(Throwable throwable) throws Exception {
-                                   Log.i("qwerty", throwable.getLocalizedMessage());
+                                   //Todo: [] Сделать liveDataExceptionsOfDay
                                }
                            }
                 );
     }
 
     public void loadDataOfSevenDay(double lat, double lon) {
-        disposableSevenDays = apiService.getSevenDaysResponse(ApiKeyStorage.API_KEY, lat, lon, NetworkUtils.EXCLUDED_DATA, NetworkUtils.VALUE_UNITS_METRIC)
+        disposableSevenDays = apiService.getSevenDaysResponse(ApiKeyStorage.API_KEY, lat, lon, EXCLUDED_DATA, VALUE_UNITS_METRIC)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<SevenDays>() {
