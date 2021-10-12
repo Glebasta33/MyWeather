@@ -22,6 +22,7 @@
     <string name="speed_of_wind">Wind speed:</string>
     <string name="units">Units:</string>
     <string name="temp_fahrenheit">°F</string>
+    <string name="menu_lang">Язык</string>
 
     <string-array name="spinner_units">
         <item>Metric</item>

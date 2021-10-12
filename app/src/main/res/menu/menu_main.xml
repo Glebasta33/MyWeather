@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/mi_lang"
+        android:title="@string/menu_lang"
+        app:showAsAction="collapseActionView">
+        <menu>
+            <item
+                android:id="@+id/mi_lang_ru"
+                android:title="Русский"
+                app:showAsAction="collapseActionView"/>
+            <item
+                android:id="@+id/mi_lang_eng"
+                android:title="English"
+                app:showAsAction="collapseActionView"/>
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/mi_units"
+        android:title="@string/menu_lang"
+        app:showAsAction="collapseActionView">
+        <menu>
+            <item
+                android:id="@+id/mi_units_metric"
+                android:title="Метрические"
+                app:showAsAction="collapseActionView"/>
+            <item
+                android:id="@+id/mi_units_standard"
+                android:title="Стандартные"
+                app:showAsAction="collapseActionView"/>
+        </menu>
+    </item>
+
+    <!--TODO : [] Вынести строковые ресурсы -->
+    <!--TODO : [] Упорядочить и стандартизировать названия строковых ресурсов -->
+
+</menu>
