@@ -9,6 +9,8 @@
     <string name="toast_no_connection">Отсутствует подключение к интернету</string>
     <string name="toast_input_city">Введите название города</string>
     <string name="toast_city_not_found">Некорректное название города</string>
+
+    <!-- Values -->
     <string name="value_of_speed_of_wind_meters_in_sec">м/с</string>
     <string name="value_of_pressure_mm">мм рт. ст.</string>
     <string name="value_of_temp_calcium">°C</string>
@@ -24,10 +26,12 @@
     <string name="units">Единицы:</string>
     <string name="temp_fahrenheit">°F</string>
 
-    <string-array name="spinner_units">
-        <item>Метрические</item>
-        <item>Стандартные</item>
-    </string-array>
+    <!-- Menu -->
+    <string name="menu_lang">Язык</string>
+    <string name="menu_lang_eng">English</string>
+    <string name="menu_lang_ru">Русский</string>
+    <string name="menu_units_metric">Метрические</string>
+    <string name="menu_units_standard">Стандартные</string>
 
     <string-array name="directions_of_wind">
         <item>↓ С</item>

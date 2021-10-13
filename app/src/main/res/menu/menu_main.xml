@@ -9,11 +9,11 @@
         <menu>
             <item
                 android:id="@+id/mi_lang_ru"
-                android:title="Русский"
+                android:title="@string/menu_lang_ru"
                 app:showAsAction="collapseActionView"/>
             <item
                 android:id="@+id/mi_lang_eng"
-                android:title="English"
+                android:title="@string/menu_lang_eng"
                 app:showAsAction="collapseActionView"/>
         </menu>
     </item>
@@ -25,16 +25,13 @@
         <menu>
             <item
                 android:id="@+id/mi_units_metric"
-                android:title="Метрические"
+                android:title="@string/menu_units_metric"
                 app:showAsAction="collapseActionView"/>
             <item
                 android:id="@+id/mi_units_standard"
-                android:title="Стандартные"
+                android:title="@string/menu_units_standard"
                 app:showAsAction="collapseActionView"/>
         </menu>
     </item>
-
-    <!--TODO : [] Вынести строковые ресурсы -->
-    <!--TODO : [] Упорядочить и стандартизировать названия строковых ресурсов -->
 
 </menu>

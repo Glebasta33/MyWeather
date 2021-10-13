@@ -8,6 +8,8 @@
     <string name="toast_no_connection">No internet connection</string>
     <string name="toast_input_city">Enter the name of the city</string>
     <string name="toast_city_not_found">City not found</string>
+
+    <!-- Values -->
     <string name="value_of_speed_of_wind_meters_in_sec">m/s</string>
     <string name="value_of_pressure_mm">mmHg</string>
     <string name="value_of_temp_calcium">°C</string>
@@ -22,12 +24,13 @@
     <string name="speed_of_wind">Wind speed:</string>
     <string name="units">Units:</string>
     <string name="temp_fahrenheit">°F</string>
-    <string name="menu_lang">Язык</string>
 
-    <string-array name="spinner_units">
-        <item>Metric</item>
-        <item>Standard</item>
-    </string-array>
+    <!-- Menu -->
+    <string name="menu_lang">Language</string>
+    <string name="menu_lang_eng">English</string>
+    <string name="menu_lang_ru">Русский</string>
+    <string name="menu_units_metric">Metric</string>
+    <string name="menu_units_standard">Standard</string>
 
     <string-array name="directions_of_wind">
         <item>↓ N</item>

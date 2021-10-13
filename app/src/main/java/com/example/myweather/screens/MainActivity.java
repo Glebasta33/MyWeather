@@ -1,7 +1,9 @@
 package com.example.myweather.screens;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -12,6 +14,8 @@ import android.net.Network;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -85,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView textViewDate5;
     private TextView textViewDate6;
     private TextView textViewDate7;
+    private Toolbar toolbar;
 
 
     private boolean isWifiConnected;
@@ -92,6 +97,30 @@ public class MainActivity extends AppCompatActivity {
     public static String lang;
 
     private WeatherViewModel viewModelOfWeather;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.mi_lang_eng:
+                Toast.makeText(this, "Eng", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.mi_lang_ru:
+                Toast.makeText(this, "Ru", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.mi_units_metric:
+                Toast.makeText(this, "Metric", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.mi_units_standard:
+                Toast.makeText(this, "Standard", Toast.LENGTH_SHORT).show();
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,6 +171,7 @@ public class MainActivity extends AppCompatActivity {
         textViewDate5 = findViewById(R.id.textViewDay5);
         textViewDate6 = findViewById(R.id.textViewDay6);
         textViewDate7 = findViewById(R.id.textViewDay7);
+        toolbar = findViewById(R.id.toolbar);
 
         MyLocationProvider.findLocation(MainActivity.this);
 
