@@ -178,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
 
         setDates(new Date());
 
+        //Todo: [] Replace Observer anon classes with lambda expressions
         // LiveData
         viewModelOfWeather = ViewModelProviders.of(this).get(WeatherViewModel.class);
         viewModelOfWeather.getLiveDataOfDay().observe(this, new Observer<Day>() {
@@ -191,6 +192,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChanged(SevenDays sevenDays) {
                 updateSevenDaysLayout(sevenDays);
+            }
+        });
+        viewModelOfWeather.getLiveDataThrowable().observe(this, new Observer<Throwable>() {
+            @Override
+            public void onChanged(Throwable throwable) {
+                Toast.makeText(MainActivity.this, "" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 

@@ -25,6 +25,7 @@ public class WeatherViewModel extends AndroidViewModel {
     private Disposable disposableSevenDays;
     private MutableLiveData<Day> liveDataDay;
     private MutableLiveData<SevenDays> liveDataSevenDays;
+    private MutableLiveData<Throwable> liveDataThrowable;
     private ApiFactory apiFactory;
     private ApiService apiService;
 
@@ -32,6 +33,7 @@ public class WeatherViewModel extends AndroidViewModel {
         super(application);
         liveDataDay = new MutableLiveData<>();
         liveDataSevenDays = new MutableLiveData<>();
+        liveDataThrowable = new MutableLiveData<>();
         apiFactory = ApiFactory.getInstance();
         apiService = apiFactory.getApiService();
     }
@@ -44,21 +46,17 @@ public class WeatherViewModel extends AndroidViewModel {
         return liveDataSevenDays;
     }
 
+    public LiveData<Throwable> getLiveDataThrowable() {
+        return liveDataThrowable;
+    }
+
     public void loadDataOfDay(String nameOfCity) {
         disposableDay = apiService.getDayResponse(ApiKeyStorage.API_KEY, nameOfCity, VALUE_UNITS_METRIC)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Day>() {
-                               @Override
-                               public void accept(Day day) throws Exception {
-                                   liveDataDay.setValue(day);
-                               }
-                           }, new Consumer<Throwable>() {
-                               @Override
-                               public void accept(Throwable throwable) throws Exception {
-                                   //Todo: [] Сделать liveDataExceptionsOfDay
-                               }
-                           }
+                .subscribe(
+                        day -> liveDataDay.setValue(day),
+                        throwable -> liveDataThrowable.setValue(throwable)
                 );
     }
 
@@ -66,17 +64,9 @@ public class WeatherViewModel extends AndroidViewModel {
         disposableDay = apiService.getDayResponse(ApiKeyStorage.API_KEY, lat, lon, VALUE_UNITS_METRIC)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Day>() {
-                               @Override
-                               public void accept(Day day) throws Exception {
-                                   liveDataDay.setValue(day);
-                               }
-                           }, new Consumer<Throwable>() {
-                               @Override
-                               public void accept(Throwable throwable) throws Exception {
-                                   //Todo: [] Сделать liveDataExceptionsOfDay
-                               }
-                           }
+                .subscribe(
+                        day -> liveDataDay.setValue(day),
+                        throwable -> liveDataThrowable.setValue(throwable)
                 );
     }
 
@@ -84,18 +74,9 @@ public class WeatherViewModel extends AndroidViewModel {
         disposableSevenDays = apiService.getSevenDaysResponse(ApiKeyStorage.API_KEY, lat, lon, EXCLUDED_DATA, VALUE_UNITS_METRIC)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<SevenDays>() {
-                    @Override
-                    public void accept(SevenDays sevenDays) throws Exception {
-                        liveDataSevenDays.setValue(sevenDays);
-
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        //Todo: [] Сделать liveDataExceptionsOfSevenDays
-                    }
-                });
+                .subscribe(
+                        sevenDays -> liveDataSevenDays.setValue(sevenDays),
+                        throwable -> liveDataThrowable.setValue(throwable));
     }
 
 
