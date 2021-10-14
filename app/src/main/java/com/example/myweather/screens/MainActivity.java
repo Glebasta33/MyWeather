@@ -172,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
         textViewDate6 = findViewById(R.id.textViewDay6);
         textViewDate7 = findViewById(R.id.textViewDay7);
         toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         MyLocationProvider.findLocation(MainActivity.this);
 

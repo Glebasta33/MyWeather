@@ -29,6 +29,7 @@
     <string name="menu_lang">Language</string>
     <string name="menu_lang_eng">English</string>
     <string name="menu_lang_ru">Русский</string>
+    <string name="menu_units">Units</string>
     <string name="menu_units_metric">Metric</string>
     <string name="menu_units_standard">Standard</string>
 
