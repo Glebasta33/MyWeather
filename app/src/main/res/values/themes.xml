@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.MyWeather" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Theme.MyWeather" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
@@ -34,5 +34,7 @@
         <item name="selectableItemBackgroundBorderless">?android:selectableItemBackground</item>
         -->
     </style>
+
+    <!--TODO : [] Привести к единому стилю цвета в приложении используя Themes & Styles -->
 
 </resources>

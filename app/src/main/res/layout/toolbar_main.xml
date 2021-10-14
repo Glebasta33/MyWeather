@@ -1,19 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.Toolbar
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/buttons"
     android:theme="@style/ToolbarTheme">
-    <LinearLayout
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
-        <ImageView
-            android:id="@+id/imageViewMenuButton"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/common_full_open_on_phone"/>
-    </LinearLayout>
+        android:layout_height="match_parent">
+
+        <Switch
+            android:id="@+id/switchDayOrWeek"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+        <TextView
+            android:id="@+id/textViewToday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/switch_today"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="@+id/switchDayOrWeek"
+            app:layout_constraintEnd_toStartOf="@+id/switchDayOrWeek"
+            app:layout_constraintTop_toTopOf="@+id/switchDayOrWeek" />
+
+        <TextView
+            android:id="@+id/textViewWeek"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/switch_seven_days"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="@+id/switchDayOrWeek"
+            app:layout_constraintStart_toEndOf="@+id/switchDayOrWeek"
+            app:layout_constraintTop_toTopOf="@+id/switchDayOrWeek" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.appcompat.widget.Toolbar>

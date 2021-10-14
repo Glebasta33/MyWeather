@@ -21,45 +21,6 @@
         />
 
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayoutHeader"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/header_height"
-        android:background="@color/header"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar">
-
-        <Switch
-            android:id="@+id/switchDayOrWeek"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="UseSwitchCompatOrMaterialXml" />
-
-        <TextView
-            android:id="@+id/textViewToday"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/switch_today"
-            app:layout_constraintBottom_toBottomOf="@+id/switchDayOrWeek"
-            app:layout_constraintEnd_toStartOf="@+id/switchDayOrWeek"
-            app:layout_constraintTop_toTopOf="@+id/switchDayOrWeek" />
-
-        <TextView
-            android:id="@+id/textViewWeek"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/switch_seven_days"
-            app:layout_constraintBottom_toBottomOf="@+id/switchDayOrWeek"
-            app:layout_constraintStart_toEndOf="@+id/switchDayOrWeek"
-            app:layout_constraintTop_toTopOf="@+id/switchDayOrWeek" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
     <!-- MIDDLE -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayoutMiddle"
@@ -69,7 +30,7 @@
         app:layout_constraintBottom_toTopOf="@+id/constraintLayoutFooter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayoutHeader"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
         app:layout_constraintVertical_weight="3">
 
         <!-- DAY -->

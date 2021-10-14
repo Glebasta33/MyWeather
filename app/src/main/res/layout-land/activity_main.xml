@@ -9,44 +9,16 @@
     tools:context=".screens.MainActivity">
 
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayoutHeader"
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar_main"
+        android:minHeight="?attr/actionBarSize"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/header_height_land"
-        android:background="@color/header"
+        android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <Switch
-            android:id="@+id/switchDayOrWeek"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="UseSwitchCompatOrMaterialXml" />
-
-        <TextView
-            android:id="@+id/textViewToday"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/switch_today"
-            app:layout_constraintBottom_toBottomOf="@+id/switchDayOrWeek"
-            app:layout_constraintEnd_toStartOf="@+id/switchDayOrWeek"
-            app:layout_constraintTop_toTopOf="@+id/switchDayOrWeek" />
-
-        <TextView
-            android:id="@+id/textViewWeek"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/switch_seven_days"
-            app:layout_constraintBottom_toBottomOf="@+id/switchDayOrWeek"
-            app:layout_constraintStart_toEndOf="@+id/switchDayOrWeek"
-            app:layout_constraintTop_toTopOf="@+id/switchDayOrWeek" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
     <!-- MIDDLE -->
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -58,7 +30,7 @@
         app:layout_constraintEnd_toStartOf="@+id/includeFooter"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayoutHeader"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
         app:layout_constraintHorizontal_weight="3">
 
         <!-- DAY -->
@@ -113,7 +85,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/constraintLayoutMiddle"
-        app:layout_constraintTop_toBottomOf="@id/constraintLayoutHeader"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintHorizontal_weight="2"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
