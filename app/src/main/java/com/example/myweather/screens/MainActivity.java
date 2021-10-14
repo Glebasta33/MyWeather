@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
         viewModelOfWeather.getLiveDataThrowable().observe(this, new Observer<Throwable>() {
             @Override
             public void onChanged(Throwable throwable) {
-                Toast.makeText(MainActivity.this, "" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Error: " + throwable.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
