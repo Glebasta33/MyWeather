@@ -5,7 +5,6 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Context;
@@ -19,7 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Switch;
@@ -90,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView textViewDate6;
     private TextView textViewDate7;
     private Toolbar toolbar;
+
 
 
     private boolean isWifiConnected;
@@ -178,77 +177,58 @@ public class MainActivity extends AppCompatActivity {
 
         setDates(new Date());
 
-        //Todo: [] Replace Observer anon classes with lambda expressions
         // LiveData
         viewModelOfWeather = ViewModelProviders.of(this).get(WeatherViewModel.class);
-        viewModelOfWeather.getLiveDataOfDay().observe(this, new Observer<Day>() {
-            @Override
-            public void onChanged(Day day) {
-                updateDayLayout(day);
-                viewModelOfWeather.loadDataOfSevenDay(day.getCoord().getLat(), day.getCoord().getLon());
+        viewModelOfWeather.getLiveDataOfDay().observe(this, day -> {
+            updateDayLayout(day);
+            viewModelOfWeather.loadDataOfSevenDay(day.getCoord().getLat(), day.getCoord().getLon());
+        });
+        viewModelOfWeather.getLiveDataOfSevenDays().observe(this, sevenDays -> updateSevenDaysLayout(sevenDays));
+        viewModelOfWeather.getLiveDataThrowable().observe(this, throwable -> Toast.makeText(MainActivity.this, "Error: " + throwable.getMessage(), Toast.LENGTH_SHORT).show());
+        viewModelOfWeather.getLiveDataDayFromDB().observe(this, day -> {
+            if (day != null) {
+                Toast.makeText(this, "From main DB: " + day.getName(), Toast.LENGTH_SHORT).show();
             }
         });
-        viewModelOfWeather.getLiveDataOfSevenDays().observe(this, new Observer<SevenDays>() {
-            @Override
-            public void onChanged(SevenDays sevenDays) {
-                updateSevenDaysLayout(sevenDays);
+
+        switchWeather.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                weekLayout.setVisibility(View.VISIBLE);
+            } else {
+                weekLayout.setVisibility(View.INVISIBLE);
             }
         });
-        viewModelOfWeather.getLiveDataThrowable().observe(this, new Observer<Throwable>() {
-            @Override
-            public void onChanged(Throwable throwable) {
-                Toast.makeText(MainActivity.this, "Error: " + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+
+        buttonFindNearby.setOnClickListener(v -> {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                checkConnectionState();
+            }
+            if (isMobileConnected || isWifiConnected) {
+                viewModelOfWeather.loadDataOfDay(MyLocationProvider.getLatitude(), MyLocationProvider.getLongitude());
+            } else {
+                Toast.makeText(MainActivity.this, R.string.toast_no_connection, Toast.LENGTH_SHORT).show();
             }
         });
 
 
-        switchWeather.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    weekLayout.setVisibility(View.VISIBLE);
-                } else {
-                    weekLayout.setVisibility(View.INVISIBLE);
-                }
-            }
-        });
-
-        buttonFindNearby.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        buttonFindByCity.setOnClickListener(v -> {
+            String nameOfCity = editTextNameOfCity.getText().toString();
+            if (!nameOfCity.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     checkConnectionState();
                 }
                 if (isMobileConnected || isWifiConnected) {
-                    viewModelOfWeather.loadDataOfDay(MyLocationProvider.getLatitude(), MyLocationProvider.getLongitude());
+                    try {
+                        viewModelOfWeather.loadDataOfDay(nameOfCity);
+                    } catch (Exception e) {
+                        Toast.makeText(MainActivity.this, R.string.toast_city_not_found + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }
                 } else {
                     Toast.makeText(MainActivity.this, R.string.toast_no_connection, Toast.LENGTH_SHORT).show();
                 }
-            }
-        });
-
-
-        buttonFindByCity.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String nameOfCity = editTextNameOfCity.getText().toString();
-                if (!nameOfCity.isEmpty()) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        checkConnectionState();
-                    }
-                    if (isMobileConnected || isWifiConnected) {
-                        try {
-                            viewModelOfWeather.loadDataOfDay(nameOfCity);
-                        } catch (Exception e) {
-                            Toast.makeText(MainActivity.this, R.string.toast_city_not_found + e.getMessage(), Toast.LENGTH_SHORT).show();
-                            e.printStackTrace();
-                        }
-                    } else {
-                        Toast.makeText(MainActivity.this, R.string.toast_no_connection, Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(getApplicationContext(), R.string.toast_input_city, Toast.LENGTH_SHORT).show();
-                }
+            } else {
+                Toast.makeText(getApplicationContext(), R.string.toast_input_city, Toast.LENGTH_SHORT).show();
             }
         });
     }

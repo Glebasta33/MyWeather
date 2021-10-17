@@ -1,6 +1,7 @@
 package com.example.myweather.data;
 
 import android.app.Application;
+import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -12,22 +13,26 @@ import com.example.myweather.api.ApiService;
 import com.example.myweather.data.pojo.day.Day;
 import com.example.myweather.data.pojo.seven_days.SevenDays;
 import com.example.myweather.utils.ApiKeyStorage;
+
+import java.util.concurrent.ExecutionException;
+
 import static com.example.myweather.utils.NetworkUtils.*;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class WeatherViewModel extends AndroidViewModel {
 
-    private Disposable disposableDay;
-    private Disposable disposableSevenDays;
+    private static Database db;
+    private LiveData<Day> liveDataDayFromDB;
     private MutableLiveData<Day> liveDataDay;
     private MutableLiveData<SevenDays> liveDataSevenDays;
     private MutableLiveData<Throwable> liveDataThrowable;
     private ApiFactory apiFactory;
     private ApiService apiService;
+    private Disposable disposableDay;
+    private Disposable disposableSevenDays;
 
     public WeatherViewModel(@NonNull Application application) {
         super(application);
@@ -36,6 +41,49 @@ public class WeatherViewModel extends AndroidViewModel {
         liveDataThrowable = new MutableLiveData<>();
         apiFactory = ApiFactory.getInstance();
         apiService = apiFactory.getApiService();
+        db = Database.getInstance(application);
+        liveDataDayFromDB = db.getDayDao().getDay();
+    }
+
+    public void loadDataOfDay(String nameOfCity) {
+        disposableDay = apiService.getDayResponse(ApiKeyStorage.API_KEY, nameOfCity, VALUE_UNITS_METRIC)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        day -> {
+                            liveDataDay.setValue(day);
+                            clear();
+                            insert(day);
+                        },
+                        throwable -> liveDataThrowable.setValue(throwable)
+                );
+    }
+
+    public void loadDataOfDay(double lat, double lon) {
+        disposableDay = apiService.getDayResponse(ApiKeyStorage.API_KEY, lat, lon, VALUE_UNITS_METRIC)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        day -> {
+                            liveDataDay.setValue(day);
+                            clear();
+                            insert(day);
+                        },
+                        throwable -> liveDataThrowable.setValue(throwable)
+                );
+    }
+
+    public void loadDataOfSevenDay(double lat, double lon) {
+        disposableSevenDays = apiService.getSevenDaysResponse(ApiKeyStorage.API_KEY, lat, lon, EXCLUDED_DATA, VALUE_UNITS_METRIC)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        sevenDays -> liveDataSevenDays.setValue(sevenDays),
+                        throwable -> liveDataThrowable.setValue(throwable));
+    }
+
+    public LiveData<Day> getLiveDataDayFromDB() {
+        return liveDataDayFromDB;
     }
 
     public LiveData<Day> getLiveDataOfDay() {
@@ -50,35 +98,32 @@ public class WeatherViewModel extends AndroidViewModel {
         return liveDataThrowable;
     }
 
-    public void loadDataOfDay(String nameOfCity) {
-        disposableDay = apiService.getDayResponse(ApiKeyStorage.API_KEY, nameOfCity, VALUE_UNITS_METRIC)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        day -> liveDataDay.setValue(day),
-                        throwable -> liveDataThrowable.setValue(throwable)
-                );
+    private long insert(Day day) throws ExecutionException, InterruptedException {
+        return new InsertTask().execute(day).get();
     }
 
-    public void loadDataOfDay(double lat, double lon) {
-        disposableDay = apiService.getDayResponse(ApiKeyStorage.API_KEY, lat, lon, VALUE_UNITS_METRIC)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        day -> liveDataDay.setValue(day),
-                        throwable -> liveDataThrowable.setValue(throwable)
-                );
+    private void clear() {
+        new ClearTask().execute();
     }
 
-    public void loadDataOfSevenDay(double lat, double lon) {
-        disposableSevenDays = apiService.getSevenDaysResponse(ApiKeyStorage.API_KEY, lat, lon, EXCLUDED_DATA, VALUE_UNITS_METRIC)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        sevenDays -> liveDataSevenDays.setValue(sevenDays),
-                        throwable -> liveDataThrowable.setValue(throwable));
+    private static class InsertTask extends AsyncTask<Day, Void, Long> {
+        @Override
+        protected Long doInBackground(Day... days) {
+            Long id = null;
+            if (days != null && days.length > 0) {
+                id = db.getDayDao().insertDay(days[0]);
+            }
+            return id;
+        }
     }
 
+    private static class ClearTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            db.getDayDao().clearDay();
+            return null;
+        }
+    }
 
     @Override
     protected void onCleared() {

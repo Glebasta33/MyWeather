@@ -1,38 +1,52 @@
 package com.example.myweather.data.pojo.day;
 
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+@Entity(tableName = "day")
 public class Day {
+    @PrimaryKey(autoGenerate = true)
+    private int key;
+    @Ignore // TypeConverter
     @SerializedName("coord")
     @Expose
     private Coord coord;
+    @Ignore // TypeConverter
     @SerializedName("weather")
     @Expose
     private List<Weather> weather = null;
     @SerializedName("base")
     @Expose
     private String base;
+    @Ignore // TypeConverter
     @SerializedName("main")
     @Expose
     private Main main;
     @SerializedName("visibility")
     @Expose
     private int visibility;
+    @Ignore // TypeConverter
     @SerializedName("wind")
     @Expose
     private Wind wind;
+    @Ignore // TypeConverter
     @SerializedName("rain")
     @Expose
     private Rain rain;
+    @Ignore // TypeConverter
     @SerializedName("clouds")
     @Expose
     private Clouds clouds;
     @SerializedName("dt")
     @Expose
     private int dt;
+    @Ignore // TypeConverter
     @SerializedName("sys")
     @Expose
     private Sys sys;
@@ -48,6 +62,14 @@ public class Day {
     @SerializedName("cod")
     @Expose
     private int cod;
+
+    public int getKey() {
+        return key;
+    }
+
+    public void setKey(int key) {
+        this.key = key;
+    }
 
     public Coord getCoord() {
         return coord;
