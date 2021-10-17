@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase;
 import com.example.myweather.data.pojo.day.Day;
 import com.example.myweather.data.pojo.day.DayDao;
 
-@androidx.room.Database(entities = {Day.class}, version = 6, exportSchema = false)
+@androidx.room.Database(entities = {Day.class}, version = 7, exportSchema = false)
 public abstract class Database extends RoomDatabase {
     private static Database db;
     public static final String DB_NAME = "weather.db";

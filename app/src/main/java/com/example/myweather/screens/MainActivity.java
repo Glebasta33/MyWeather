@@ -187,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
         viewModelOfWeather.getLiveDataThrowable().observe(this, throwable -> Toast.makeText(MainActivity.this, "Error: " + throwable.getMessage(), Toast.LENGTH_SHORT).show());
         viewModelOfWeather.getLiveDataDayFromDB().observe(this, day -> {
             if (day != null) {
-                Toast.makeText(this, "From main DB: " + day.getName(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "From main DB: " + day.getName() + "\nCoords: " + day.getCoord().getLat() + " " + day.getCoord().getLon(), Toast.LENGTH_SHORT).show();
             }
         });
 

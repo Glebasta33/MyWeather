@@ -3,17 +3,20 @@ package com.example.myweather.data.pojo.day;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
+import com.example.myweather.data.converters.DayConverter;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
 @Entity(tableName = "day")
+@TypeConverters(value = DayConverter.class)
 public class Day {
     @PrimaryKey(autoGenerate = true)
     private int key;
-    @Ignore // TypeConverter
+    // TypeConverter +
     @SerializedName("coord")
     @Expose
     private Coord coord;
@@ -40,9 +43,6 @@ public class Day {
     @Expose
     private Rain rain;
     @Ignore // TypeConverter
-    @SerializedName("clouds")
-    @Expose
-    private Clouds clouds;
     @SerializedName("dt")
     @Expose
     private int dt;
@@ -125,14 +125,6 @@ public class Day {
 
     public void setRain(Rain rain) {
         this.rain = rain;
-    }
-
-    public Clouds getClouds() {
-        return clouds;
-    }
-
-    public void setClouds(Clouds clouds) {
-        this.clouds = clouds;
     }
 
     public int getDt() {
