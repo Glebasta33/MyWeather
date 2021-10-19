@@ -16,25 +16,21 @@ import java.util.List;
 public class Day {
     @PrimaryKey(autoGenerate = true)
     private int key;
-    // TypeConverter +
     @SerializedName("coord")
     @Expose
     private Coord coord;
-    @Ignore // TypeConverter
     @SerializedName("weather")
     @Expose
     private List<Weather> weather = null;
     @SerializedName("base")
     @Expose
     private String base;
-    @Ignore // TypeConverter
     @SerializedName("main")
     @Expose
     private Main main;
     @SerializedName("visibility")
     @Expose
     private int visibility;
-    @Ignore // TypeConverter
     @SerializedName("wind")
     @Expose
     private Wind wind;

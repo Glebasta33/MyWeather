@@ -179,15 +179,27 @@ public class MainActivity extends AppCompatActivity {
 
         // LiveData
         viewModelOfWeather = ViewModelProviders.of(this).get(WeatherViewModel.class);
-        viewModelOfWeather.getLiveDataOfDay().observe(this, day -> {
-            updateDayLayout(day);
-            viewModelOfWeather.loadDataOfSevenDay(day.getCoord().getLat(), day.getCoord().getLon());
-        });
-        viewModelOfWeather.getLiveDataOfSevenDays().observe(this, sevenDays -> updateSevenDaysLayout(sevenDays));
+//        viewModelOfWeather.getLiveDataOfDay().observe(this, day -> {
+//            updateDayLayout(day);
+//            viewModelOfWeather.loadDataOfSevenDay(day.getCoord().getLat(), day.getCoord().getLon());
+//        });
+
+       // viewModelOfWeather.getLiveDataOfSevenDays().observe(this, sevenDays -> updateSevenDaysLayout(sevenDays));
         viewModelOfWeather.getLiveDataThrowable().observe(this, throwable -> Toast.makeText(MainActivity.this, "Error: " + throwable.getMessage(), Toast.LENGTH_SHORT).show());
         viewModelOfWeather.getLiveDataDayFromDB().observe(this, day -> {
-            if (day != null) {
-                Toast.makeText(this, "From main DB: " + day.getName() + "\nCoords: " + day.getCoord().getLat() + " " + day.getCoord().getLon(), Toast.LENGTH_SHORT).show();
+            if (day != null ) {
+                try {
+                    updateDayLayout(day);
+//                    textViewNameOfCity.setText(String.format("%s", day.getName()));
+//                    textViewFeelsLike.setText(String.format(Locale.getDefault(), "%.1f" + getString(R.string.value_of_temp_calcium), day.getMain().getFeelsLike()));
+//                    String[] directions = getResources().getStringArray(R.array.directions_of_wind);
+//                    textViewDirectionOfWind.setText(String.format("%s", directions[(int) (Math.round(day.getWind().getDeg() / 45) % 8)]));
+//                    textViewSpeedOfWind.setText(String.format(Locale.getDefault(), "%.1f " + getString(R.string.value_of_speed_of_wind_meters_in_sec), day.getWind().getSpeed()));
+                    // viewModelOfWeather.loadDataOfSevenDay(day.getCoord().getLat(), day.getCoord().getLon());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
