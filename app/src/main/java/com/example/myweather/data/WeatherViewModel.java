@@ -26,6 +26,7 @@ public class WeatherViewModel extends AndroidViewModel {
 
     private static Database db;
     private LiveData<Day> liveDataDayFromDB;
+    private LiveData<SevenDays> liveDataSevenDaysFromDB;
     private MutableLiveData<Day> liveDataDay;
     private MutableLiveData<SevenDays> liveDataSevenDays;
     private MutableLiveData<Throwable> liveDataThrowable;
@@ -43,6 +44,7 @@ public class WeatherViewModel extends AndroidViewModel {
         apiService = apiFactory.getApiService();
         db = Database.getInstance(application);
         liveDataDayFromDB = db.getDayDao().getDay();
+        liveDataSevenDaysFromDB = db.getSevenDaysDao().getSevenDays();
     }
 
     public void loadDataOfDay(String nameOfCity) {
@@ -78,12 +80,20 @@ public class WeatherViewModel extends AndroidViewModel {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        sevenDays -> liveDataSevenDays.setValue(sevenDays),
+                        sevenDays -> {
+                            liveDataSevenDays.setValue(sevenDays);
+                            clearSevenDays();
+                            insertIntoSevenDays(sevenDays);
+                        },
                         throwable -> liveDataThrowable.setValue(throwable));
     }
 
     public LiveData<Day> getLiveDataDayFromDB() {
         return liveDataDayFromDB;
+    }
+
+    public LiveData<SevenDays> getLiveDataSevenDaysFromDB() {
+        return liveDataSevenDaysFromDB;
     }
 
     public LiveData<Day> getLiveDataOfDay() {
@@ -106,6 +116,14 @@ public class WeatherViewModel extends AndroidViewModel {
         new ClearTask().execute();
     }
 
+    private void insertIntoSevenDays(SevenDays sevenDays) {
+        new InsertSevenDaysTask().execute(sevenDays);
+    }
+
+    private void clearSevenDays() {
+        new ClearSevenDaysTask().execute();
+    }
+
     private static class InsertTask extends AsyncTask<Day, Void, Long> {
         @Override
         protected Long doInBackground(Day... days) {
@@ -121,6 +139,24 @@ public class WeatherViewModel extends AndroidViewModel {
         @Override
         protected Void doInBackground(Void... voids) {
             db.getDayDao().clearDay();
+            return null;
+        }
+    }
+
+    private static class InsertSevenDaysTask extends AsyncTask<SevenDays, Void, Void> {
+        @Override
+        protected Void doInBackground(SevenDays... sevenDays) {
+            if (sevenDays != null && sevenDays.length > 0) {
+                db.getSevenDaysDao().insertSevenDays(sevenDays[0]);
+            }
+            return null;
+        }
+    }
+
+    private static class ClearSevenDaysTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            db.getSevenDaysDao().clearSevenDays();
             return null;
         }
     }

@@ -1,23 +1,25 @@
 package com.example.myweather.data.pojo.seven_days;
 
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+@Entity(tableName = "seven_days")
 public class SevenDays {
+    @PrimaryKey(autoGenerate = true)
+    private int key;
     @SerializedName("lat")
     @Expose
     private double lat;
     @SerializedName("lon")
     @Expose
     private double lon;
-    @SerializedName("timezone")
-    @Expose
-    private String timezone;
-    @SerializedName("timezone_offset")
-    @Expose
-    private int timezoneOffset;
+    @Ignore
     @SerializedName("daily")
     @Expose
     private List<Daily> daily = null;
@@ -38,27 +40,19 @@ public class SevenDays {
         this.lon = lon;
     }
 
-    public String getTimezone() {
-        return timezone;
-    }
-
-    public void setTimezone(String timezone) {
-        this.timezone = timezone;
-    }
-
-    public int getTimezoneOffset() {
-        return timezoneOffset;
-    }
-
-    public void setTimezoneOffset(int timezoneOffset) {
-        this.timezoneOffset = timezoneOffset;
-    }
-
     public List<Daily> getDaily() {
         return daily;
     }
 
     public void setDaily(List<Daily> daily) {
         this.daily = daily;
+    }
+
+    public int getKey() {
+        return key;
+    }
+
+    public void setKey(int key) {
+        this.key = key;
     }
 }
