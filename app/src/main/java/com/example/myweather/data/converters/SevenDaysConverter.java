@@ -16,32 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SevenDaysConverter {
-//    @TypeConverter
-//    public String objectTempToString(Temp temp) {
-//        return new Gson().toJson(temp);
-//    }
-//
-//    @TypeConverter
-//    public Temp stringToObjectTemp(String tempAsString) {
-//        return new Gson().fromJson(tempAsString, Temp.class);
-//    }
-//
-//    @TypeConverter
-//    public String listOfWeatherToString(List<Weather> weathers) {
-//        return new Gson().toJson(weathers);
-//    }
-//
-//    @TypeConverter
-//    public List<Weather> stringToListOfWeather(String weatherAsString) throws JSONException {
-//        JSONArray jsonArray = new JSONArray(weatherAsString);
-//        JSONObject jsonObject = (JSONObject) jsonArray.get(0);
-//        Weather w = new Weather();
-//        w.setId(jsonObject.getInt("id"));
-//        w.setIcon(jsonObject.getString("icon"));
-//        ArrayList<Weather> weathers = new ArrayList<>();
-//        weathers.add(w);
-//        return weathers;
-//    }
 
     @TypeConverter
     public String listOfDailyToString(List<Daily> daily) {
