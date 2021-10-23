@@ -13,6 +13,7 @@ import android.net.Network;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -174,24 +175,30 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         MyLocationProvider.findLocation(MainActivity.this);
-
         setDates(new Date());
 
         // LiveData
         viewModelOfWeather = ViewModelProviders.of(this).get(WeatherViewModel.class);
-        viewModelOfWeather.getLiveDataOfDay().observe(this, day -> {
-            viewModelOfWeather.loadDataOfSevenDay(day.getCoord().getLat(), day.getCoord().getLon());
-        });
 
-        viewModelOfWeather.getLiveDataOfSevenDays().observe(this, this::updateSevenDaysLayout);
+        viewModelOfWeather.getLiveDataSevenDaysFromDB().observe(this, sevenDays -> {
+            try {
+                if (sevenDays.getDaily().get(6) != null) {
+                    updateSevenDaysLayout(sevenDays);
+                }
+                // Log.v("SEVEN_DAYS_TEST", "Icon: " + sevenDays.getDaily().get(0).getWeather().get(0).getIcon());
+            } catch (Exception e) {
+                Log.v("SEVEN_DAYS_TEST", e.getMessage());
+            }
+        });
         viewModelOfWeather.getLiveDataThrowable().observe(this, throwable -> Toast.makeText(MainActivity.this, "Error: " + throwable.getMessage(), Toast.LENGTH_SHORT).show());
         viewModelOfWeather.getLiveDataDayFromDB().observe(this, day -> {
             if (day != null ) {
                 try {
+                    viewModelOfWeather.loadDataOfSevenDay(day.getCoord().getLat(), day.getCoord().getLon());
                     updateDayLayout(day);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Toast.makeText(this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });

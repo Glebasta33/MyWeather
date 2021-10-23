@@ -10,7 +10,7 @@ import com.example.myweather.data.pojo.day.DayDao;
 import com.example.myweather.data.pojo.seven_days.SevenDays;
 import com.example.myweather.data.pojo.seven_days.SevenDaysDao;
 
-@androidx.room.Database(entities = {Day.class, SevenDays.class}, version = 14, exportSchema = false)
+@androidx.room.Database(entities = {Day.class, SevenDays.class}, version = 16, exportSchema = false)
 public abstract class Database extends RoomDatabase {
     private static Database db;
     public static final String DB_NAME = "weather.db";
