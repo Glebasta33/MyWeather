@@ -1,12 +1,5 @@
 package com.example.myweather.screens;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.lifecycle.ViewModelProviders;
-
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.Network;
@@ -25,11 +18,19 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.example.myweather.R;
 import com.example.myweather.data.WeatherViewModel;
 import com.example.myweather.data.pojo.day.Day;
 import com.example.myweather.data.pojo.seven_days.SevenDays;
 import com.example.myweather.utils.CalendarUtils;
+import com.example.myweather.utils.ChartUtils;
 import com.example.myweather.utils.MyLocationProvider;
 import com.example.myweather.utils.NetworkUtils;
 import com.squareup.picasso.Picasso;
@@ -89,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
     private TextView textViewDate6;
     private TextView textViewDate7;
     private Toolbar toolbar;
-
 
 
     private boolean isWifiConnected;
@@ -182,17 +182,14 @@ public class MainActivity extends AppCompatActivity {
 
         viewModelOfWeather.getLiveDataSevenDaysFromDB().observe(this, sevenDays -> {
             try {
-                if (sevenDays.getDaily().get(6) != null) {
-                    updateSevenDaysLayout(sevenDays);
-                }
-                // Log.v("SEVEN_DAYS_TEST", "Icon: " + sevenDays.getDaily().get(0).getWeather().get(0).getIcon());
+                updateSevenDaysLayout(sevenDays);
             } catch (Exception e) {
                 Log.v("SEVEN_DAYS_TEST", e.getMessage());
             }
         });
-        viewModelOfWeather.getLiveDataThrowable().observe(this, throwable -> Toast.makeText(MainActivity.this, "Error: " + throwable.getMessage(), Toast.LENGTH_SHORT).show());
+        viewModelOfWeather.getLiveDataThrowable().observe(this, throwable -> Toast.makeText(MainActivity.this, getString(R.string.toast_error) + throwable.getMessage(), Toast.LENGTH_SHORT).show());
         viewModelOfWeather.getLiveDataDayFromDB().observe(this, day -> {
-            if (day != null ) {
+            if (day != null) {
                 try {
                     viewModelOfWeather.loadDataOfSevenDay(day.getCoord().getLat(), day.getCoord().getLon());
                     updateDayLayout(day);
@@ -262,21 +259,27 @@ public class MainActivity extends AppCompatActivity {
 
     private ViewGroup.LayoutParams getLayoutParamsForTempColumn(View v, double temp) {
         ViewGroup.LayoutParams layoutParams = v.getLayoutParams();
-        layoutParams.height = (int) temp * 15;
+        layoutParams.height = ((int) temp) * 10;
         return layoutParams;
     }
 
     private void updateSevenDaysLayout(SevenDays d) {
+        try {
+            ChartUtils chartUtils = new ChartUtils(d);
 
-        viewColumnDay1.setLayoutParams(getLayoutParamsForTempColumn(viewColumnDay1, d.getDaily().get(0).getTemp().getDay()));
-        viewColumnDay2.setLayoutParams(getLayoutParamsForTempColumn(viewColumnDay2, d.getDaily().get(1).getTemp().getDay()));
-        viewColumnDay3.setLayoutParams(getLayoutParamsForTempColumn(viewColumnDay3, d.getDaily().get(2).getTemp().getDay()));
-        viewColumnDay4.setLayoutParams(getLayoutParamsForTempColumn(viewColumnDay4, d.getDaily().get(3).getTemp().getDay()));
-        viewColumnDay5.setLayoutParams(getLayoutParamsForTempColumn(viewColumnDay5, d.getDaily().get(4).getTemp().getDay()));
-        viewColumnDay6.setLayoutParams(getLayoutParamsForTempColumn(viewColumnDay6, d.getDaily().get(5).getTemp().getDay()));
-        viewColumnDay7.setLayoutParams(getLayoutParamsForTempColumn(viewColumnDay7, d.getDaily().get(6).getTemp().getDay()));
+            viewColumnDay1.setLayoutParams(getLayoutParamsForTempColumn(viewColumnDay1, chartUtils.getTempList().get(0)));
+            viewColumnDay2.setLayoutParams(getLayoutParamsForTempColumn(viewColumnDay2, chartUtils.getTempList().get(1)));
+            viewColumnDay3.setLayoutParams(getLayoutParamsForTempColumn(viewColumnDay3, chartUtils.getTempList().get(2)));
+            viewColumnDay4.setLayoutParams(getLayoutParamsForTempColumn(viewColumnDay4, chartUtils.getTempList().get(3)));
+            viewColumnDay5.setLayoutParams(getLayoutParamsForTempColumn(viewColumnDay5, chartUtils.getTempList().get(4)));
+            viewColumnDay6.setLayoutParams(getLayoutParamsForTempColumn(viewColumnDay6, chartUtils.getTempList().get(5)));
+            viewColumnDay7.setLayoutParams(getLayoutParamsForTempColumn(viewColumnDay7, chartUtils.getTempList().get(6)));
+        } catch (Exception e) {
+            Log.v("CHART_UTILS_TEST", e.getMessage());
+            e.printStackTrace();
+        }
 
-        textViewTempDay1.setText(String.format(Locale.getDefault(), "%.0f°", d.getDaily().get(0).getTemp().getDay()));
+        textViewTempDay1.setText(String.format(Locale.getDefault(), "%.00f°", d.getDaily().get(0).getTemp().getDay()));
         textViewTempDay2.setText(String.format(Locale.getDefault(), "%.0f°", d.getDaily().get(1).getTemp().getDay()));
         textViewTempDay3.setText(String.format(Locale.getDefault(), "%.0f°", d.getDaily().get(2).getTemp().getDay()));
         textViewTempDay4.setText(String.format(Locale.getDefault(), "%.0f°", d.getDaily().get(3).getTemp().getDay()));
@@ -295,6 +298,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setDates(Date date) {
+        //Todo: [] Проверить, чтоб даты соответвовали температуре -> сместить на 1 день: даты или загрузку данных
         textViewDate1.setText(CalendarUtils.addDays(date, 1));
         textViewDate2.setText(CalendarUtils.addDays(date, 2));
         textViewDate3.setText(CalendarUtils.addDays(date, 3));

@@ -9,6 +9,7 @@
     <string name="toast_no_connection">Отсутствует подключение к интернету</string>
     <string name="toast_input_city">Введите название города</string>
     <string name="toast_city_not_found">Некорректное название города</string>
+    <string name="toast_error">Ошибка: </string>
 
     <!-- Values -->
     <string name="value_of_speed_of_wind_meters_in_sec">м/с</string>

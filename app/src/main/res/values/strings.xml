@@ -8,6 +8,7 @@
     <string name="toast_no_connection">No internet connection</string>
     <string name="toast_input_city">Enter the name of the city</string>
     <string name="toast_city_not_found">City not found</string>
+    <string name="toast_error">Error: </string>
 
     <!-- Values -->
     <string name="value_of_speed_of_wind_meters_in_sec">m/s</string>
