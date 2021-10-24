@@ -27,8 +27,6 @@ public class WeatherViewModel extends AndroidViewModel {
     private static Database db;
     private LiveData<Day> liveDataDayFromDB;
     private LiveData<SevenDays> liveDataSevenDaysFromDB;
-    private MutableLiveData<Day> liveDataDay;
-    private MutableLiveData<SevenDays> liveDataSevenDays;
     private MutableLiveData<Throwable> liveDataThrowable;
     private ApiFactory apiFactory;
     private ApiService apiService;
@@ -37,8 +35,6 @@ public class WeatherViewModel extends AndroidViewModel {
 
     public WeatherViewModel(@NonNull Application application) {
         super(application);
-        liveDataDay = new MutableLiveData<>();
-        liveDataSevenDays = new MutableLiveData<>();
         liveDataThrowable = new MutableLiveData<>();
         apiFactory = ApiFactory.getInstance();
         apiService = apiFactory.getApiService();
@@ -53,7 +49,6 @@ public class WeatherViewModel extends AndroidViewModel {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         day -> {
-                            liveDataDay.setValue(day);
                             clear();
                             insert(day);
                         },
@@ -67,7 +62,6 @@ public class WeatherViewModel extends AndroidViewModel {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         day -> {
-                            liveDataDay.setValue(day);
                             clear();
                             insert(day);
                         },
@@ -81,7 +75,6 @@ public class WeatherViewModel extends AndroidViewModel {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         sevenDays -> {
-                            liveDataSevenDays.setValue(sevenDays);
                             clearSevenDays();
                             insertIntoSevenDays(sevenDays);
                         },
@@ -94,14 +87,6 @@ public class WeatherViewModel extends AndroidViewModel {
 
     public LiveData<SevenDays> getLiveDataSevenDaysFromDB() {
         return liveDataSevenDaysFromDB;
-    }
-
-    public LiveData<Day> getLiveDataOfDay() {
-        return liveDataDay;
-    }
-
-    public LiveData<SevenDays> getLiveDataOfSevenDays() {
-        return liveDataSevenDays;
     }
 
     public LiveData<Throwable> getLiveDataThrowable() {
